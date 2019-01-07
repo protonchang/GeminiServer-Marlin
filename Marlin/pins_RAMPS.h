@@ -279,7 +279,7 @@
 
 // define digital pin 4 for the filament runout sensor. Use the RAMPS 1.4 digital input 4 on the servos connector
 #ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN    19
+  #define FIL_RUNOUT_PIN    4
 #endif
 
 #ifndef PS_ON_PIN
@@ -419,13 +419,13 @@
         #define BTN_EN1         17
         #define BTN_EN2         23
       #else
-        #define BTN_EN1         33 // Default here is - 31
-        #define BTN_EN2         31 // Default here is - 33
+        #define BTN_EN1         31
+        #define BTN_EN2         33
       #endif
 
       #define BTN_ENC           35
       #define SD_DETECT_PIN     49
-      #define KILL_PIN          -1 // Default here is - 41
+      #define KILL_PIN          41
 
       #if ENABLED(BQ_LCD_SMART_CONTROLLER)
         #define LCD_BACKLIGHT_PIN 39

@@ -41,6 +41,37 @@
 
 #include "pins_RAMPS.h"
 
+
+#if ENABLED(ANYCUBIC_4MAX)
+#ifdef FILWIDTH_PIN
+ #undef FILWIDTH_PIN
+ #define FILWIDTH_PIN      42  // Trigorilla have 2 Analog Pins on AUX (D42 & D43!)
+#endif
+
+#ifdef FIL_RUNOUT_PIN
+ #undef FIL_RUNOUT_PIN
+ #define FIL_RUNOUT_PIN    19  // Trigorilla Limit Switches are: D19,D18,D15,D14,D2,D3
+#endif
+
+#ifdef BTN_EN1
+  #undef BTN_EN1
+  #define BTN_EN1          33  // Anycubic 4MAX specific
+#endif
+
+#ifdef BTN_EN2
+  #undef BTN_EN2
+  #define BTN_EN2          31  // Anycubic 4MAX specific
+#endif
+
+#ifdef KILL_PIN
+  #undef KILL_PIN
+  #define KILL_PIN         -1  // Anycubic 4MAX specific
+#endif
+
+#endif // IF ENABLED(ANYCUBIC_4MAX)
+
+
+
 // TODO 1.4 boards do have an E1 stepper driver. However the pin definitions
 // from pins_RAMPS.h are incorrect for this board. e.g., Pin 44 is the Extruder fan.
 #undef E1_STEP_PIN
