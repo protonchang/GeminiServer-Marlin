@@ -50,7 +50,7 @@
 
 #ifdef FIL_RUNOUT_PIN
  #undef FIL_RUNOUT_PIN
- #define FIL_RUNOUT_PIN    19  // Trigorilla Limit Switches are: D19,D18,D15,D14,D2,D3
+ #define FIL_RUNOUT_PIN    2  // Trigorilla Limit Switches are: D19(Z_MAX_PIN), D18(Z_MIN_PIN), D15(Y_MAX_PIN), D14(Y_MIN_PIN), D2(X_MAX_PIN), D3(X_MIN_PIN)
 #endif
 
 #ifdef BTN_EN1
