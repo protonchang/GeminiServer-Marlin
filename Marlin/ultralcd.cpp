@@ -984,9 +984,6 @@ void lcd_quick_feedback(const bool clear_buttons) {
 
   #if ENABLED(USE_CONTROLLER_FAN) && ENABLED(CONTROLLER_FAN_MENU)
     extern void controllerFan();
-    extern uint8_t controllerFan_Speed; // 0-255
-    extern uint16_t controllerFan_Duration; // SECONDS
-    extern bool controllerFan_AutoMode; // Default true
 
     /**
      *

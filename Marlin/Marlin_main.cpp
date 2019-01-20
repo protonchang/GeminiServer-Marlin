@@ -502,10 +502,10 @@ float soft_endstop_min[XYZ] = { X_MIN_BED, Y_MIN_BED, Z_MIN_POS },
 #endif
 
 #if ENABLED(USE_CONTROLLER_FAN)
-  int controllerFanSpeed; // = 0;
-  uint8_t controllerFan_Speed = CONTROLLERFAN_SPEED; // 0-255
-  uint16_t controllerFan_Duration= CONTROLLERFAN_SECS; // SECONDS
-  bool controllerFan_AutoMode= true; // Default true
+  int controllerFanSpeed;
+  uint8_t controllerFan_Speed;
+  uint16_t controllerFan_Duration;
+  bool controllerFan_AutoMode;
 #endif
 
 // The active extruder (tool). Set with T<extruder> command.

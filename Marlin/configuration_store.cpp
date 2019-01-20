@@ -219,6 +219,13 @@ typedef struct SettingsDataStruct {
   int16_t lcd_contrast;                                // M250 C
 
   //
+  // controller fan
+  //
+  uint8_t controllerFan_Speed;                        // no M? # Fan Speed 0-255
+  uint16_t controllerFan_Duration;                    // no M? # Auto Start delay in sec.
+  bool controllerFan_AutoMode;                        // no M? # Default on
+
+  //
   // FWRETRACT
   //
   bool autoretract_enabled;                             // M209 S
@@ -687,6 +694,10 @@ void MarlinSettings::postprocess() {
       const int16_t lcd_contrast = 32;
     #endif
     EEPROM_WRITE(lcd_contrast);
+
+    EEPROM_WRITE(controllerFan_Speed);
+    EEPROM_WRITE(controllerFan_Duration);
+    EEPROM_WRITE(controllerFan_AutoMode);
 
     #if DISABLED(FWRETRACT)
       const bool autoretract_enabled = false;
@@ -1325,6 +1336,21 @@ void MarlinSettings::postprocess() {
       EEPROM_READ(lcd_contrast);
 
       //
+      // Controller Fan
+      //
+
+      _FIELD_TEST(controllerFan_Speed);
+
+      #if ENABLED(USE_CONTROLLER_FAN) && ENABLED(CONTROLLER_FAN_MENU)
+        EEPROM_READ(controllerFan_Speed);
+        EEPROM_READ(controllerFan_Duration);
+        EEPROM_READ(controllerFan_AutoMode);
+      #else
+        EEPROM_READ(dummyb);
+        for (uint8_t q=2; q--;) EEPROM_READ(dummy);
+      #endif
+
+      //
       // Firmware Retraction
       //
 
@@ -1926,6 +1952,12 @@ void MarlinSettings::reset() {
 
   #if HAS_LCD_CONTRAST
     lcd_contrast = DEFAULT_LCD_CONTRAST;
+  #endif
+
+  #if ENABLED(USE_CONTROLLER_FAN) && ENABLED(CONTROLLER_FAN_MENU)
+   controllerFan_Speed = CONTROLLERFAN_SPEED; // 0-255
+   controllerFan_Duration= CONTROLLERFAN_SECS; // SECONDS
+   controllerFan_AutoMode= true; // Default true
   #endif
 
   #if ENABLED(FWRETRACT)
