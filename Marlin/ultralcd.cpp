@@ -126,6 +126,7 @@ uint16_t max_display_update_time = 0;
     } \
     typedef void _name##_void
   DEFINE_LCD_IMPLEMENTATION_DRAWMENU_SETTING_EDIT_TYPE(int16_t, int3, itostr3);
+  DEFINE_LCD_IMPLEMENTATION_DRAWMENU_SETTING_EDIT_TYPE(uint16_t, int4, i16tostr3);
   DEFINE_LCD_IMPLEMENTATION_DRAWMENU_SETTING_EDIT_TYPE(uint8_t, int8, i8tostr3);
   DEFINE_LCD_IMPLEMENTATION_DRAWMENU_SETTING_EDIT_TYPE(float, float3, ftostr3);
   DEFINE_LCD_IMPLEMENTATION_DRAWMENU_SETTING_EDIT_TYPE(float, float52, ftostr52);
@@ -250,6 +251,7 @@ uint16_t max_display_update_time = 0;
     typedef void _name##_void
 
   DECLARE_MENU_EDIT_TYPE(int16_t, int3);
+  DECLARE_MENU_EDIT_TYPE(uint16_t, int4);
   DECLARE_MENU_EDIT_TYPE(uint8_t, int8);
   DECLARE_MENU_EDIT_TYPE(float, float3);
   DECLARE_MENU_EDIT_TYPE(float, float52);
@@ -978,6 +980,34 @@ void lcd_quick_feedback(const bool clear_buttons) {
     }
 
   #endif // BLTOUCH
+
+
+  #if ENABLED(USE_CONTROLLER_FAN) && ENABLED(CONTROLLER_FAN_MENU)
+    extern void controllerFan();
+    extern uint8_t controllerFan_Speed; // 0-255
+    extern uint16_t controllerFan_Duration; // SECONDS
+    extern bool controllerFan_AutoMode; // Default true
+
+    /**
+     *
+     * "Controller Fan" submenu
+     *
+     */
+    static void ctrlfan_menu() {
+      START_MENU();
+      //
+      // ^ Main
+      //
+      MENU_BACK(MSG_MAIN);
+      MENU_ITEM_EDIT_CALLBACK(int8, MSG_CONTROLLER_FAN_SPEED, &controllerFan_Speed, 0, 255, controllerFan);
+      MENU_ITEM_EDIT_CALLBACK(bool, MSG_CONTROLLER_FAN_AUTO_ON, (bool*)&controllerFan_AutoMode, controllerFan);
+      if (controllerFan_AutoMode) {
+        MENU_ITEM_EDIT_CALLBACK(int4, MSG_CONTROLLER_FAN_DURATION, &controllerFan_Duration, 0, 4800, controllerFan);
+      }
+      END_MENU();
+    }
+  #endif // USE_CONTROLLER_FAN
+
 
   #if ENABLED(LCD_PROGRESS_BAR_TEST)
 
@@ -3356,6 +3386,9 @@ void lcd_quick_feedback(const bool clear_buttons) {
     #if ENABLED(BLTOUCH)
       MENU_ITEM(submenu, MSG_BLTOUCH, bltouch_menu);
     #endif
+    #if ENABLED(USE_CONTROLLER_FAN)
+      MENU_ITEM(submenu, MSG_CONTROLLER_FAN, ctrlfan_menu);
+    #endif
 
     #if ENABLED(EEPROM_SETTINGS)
       MENU_ITEM(function, MSG_STORE_EEPROM, lcd_store_settings);
@@ -4849,6 +4882,7 @@ void lcd_quick_feedback(const bool clear_buttons) {
     typedef void _name##_void
 
   DEFINE_MENU_EDIT_TYPE(int16_t, int3, itostr3, 1);
+  DEFINE_MENU_EDIT_TYPE(uint16_t, int4, i16tostr3, 1);
   DEFINE_MENU_EDIT_TYPE(uint8_t, int8, i8tostr3, 1);
   DEFINE_MENU_EDIT_TYPE(float, float3, ftostr3, 1);
   DEFINE_MENU_EDIT_TYPE(float, float52, ftostr52, 100);

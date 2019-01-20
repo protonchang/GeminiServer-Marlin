@@ -471,6 +471,18 @@
 #ifndef MSG_EXTRA_FAN_SPEED
   #define MSG_EXTRA_FAN_SPEED                 _UxGT("Extra fan speed")
 #endif
+#ifndef MSG_CONTROLLER_FAN
+  #define MSG_CONTROLLER_FAN                  _UxGT("Fan Controller")
+#endif
+#ifndef MSG_CONTROLLER_FAN_SPEED
+  #define MSG_CONTROLLER_FAN_SPEED            _UxGT("Speed")
+#endif
+#ifndef MSG_CONTROLLER_FAN_AUTO_ON
+  #define MSG_CONTROLLER_FAN_AUTO_ON          _UxGT("Auto mode")
+#endif
+#ifndef MSG_CONTROLLER_FAN_DURATION
+  #define MSG_CONTROLLER_FAN_DURATION         _UxGT("Power On Delay")
+#endif
 #ifndef MSG_FLOW
   #define MSG_FLOW                            _UxGT("Flow")
 #endif

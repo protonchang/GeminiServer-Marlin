@@ -64,6 +64,14 @@ void safe_delay(millis_t ms) {
     return &conv[4];
   }
 
+  // Convert unsigned int to string 123 format
+  char* i16tostr3(const uint16_t i) {
+    conv[4] = RJDIGIT(i, 100);
+    conv[5] = RJDIGIT(i, 10);
+    conv[6] = DIGIMOD(i, 1);
+    return &conv[4];
+  }
+
   // Convert signed int to rj string with 123 or -12 format
   char* itostr3(int i) {
     conv[4] = MINUSOR(i, RJDIGIT(i, 100));

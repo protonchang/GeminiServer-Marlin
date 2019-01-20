@@ -36,6 +36,9 @@ void safe_delay(millis_t ms);
   // Convert uint8_t to string with 123 format
   char* i8tostr3(const uint8_t x);
 
+  // Convert uint16_t to string with 123 format
+  char* i16tostr3(const uint16_t x);
+
   // Convert signed int to rj string with 123 or -12 format
   char* itostr3(const int x);
 

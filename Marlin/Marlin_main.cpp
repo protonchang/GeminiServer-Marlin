@@ -503,6 +503,9 @@ float soft_endstop_min[XYZ] = { X_MIN_BED, Y_MIN_BED, Z_MIN_POS },
 
 #if ENABLED(USE_CONTROLLER_FAN)
   int controllerFanSpeed; // = 0;
+  uint8_t controllerFan_Speed = CONTROLLERFAN_SPEED; // 0-255
+  uint16_t controllerFan_Duration= CONTROLLERFAN_SECS; // SECONDS
+  bool controllerFan_AutoMode= true; // Default true
 #endif
 
 // The active extruder (tool). Set with T<extruder> command.
@@ -14526,7 +14529,7 @@ void prepare_move_to_destination() {
       }
 
       // Fan off if no steppers have been enabled for CONTROLLERFAN_SECS seconds
-      const uint8_t speed = (lastMotorOn && PENDING(ms, lastMotorOn + (CONTROLLERFAN_SECS) * 1000UL)) ? CONTROLLERFAN_SPEED : 0;
+      const uint8_t speed = controllerFan_AutoMode ? ((lastMotorOn && PENDING(ms, lastMotorOn + (controllerFan_Duration) * 1000UL)) ? controllerFan_Speed : 0) : controllerFan_Speed;
       controllerFanSpeed = speed;
 
       // allows digital or PWM fan output to be used (see M42 handling)
