@@ -512,6 +512,7 @@ void report_current_position();
 #if ENABLED(USE_CONTROLLER_FAN)
   extern int controllerFanSpeed;
   extern uint8_t controllerFan_Speed; // 0-255
+  extern uint8_t controllerFan_Idle_Speed; // 0-255
   extern uint16_t controllerFan_Duration; // SECONDS
   extern bool controllerFan_AutoMode; // Default true
 #endif

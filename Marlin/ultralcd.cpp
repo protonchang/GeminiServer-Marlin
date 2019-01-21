@@ -996,9 +996,10 @@ void lcd_quick_feedback(const bool clear_buttons) {
       // ^ Main
       //
       MENU_BACK(MSG_MAIN);
-      MENU_ITEM_EDIT_CALLBACK(int8, MSG_CONTROLLER_FAN_SPEED, &controllerFan_Speed, 0, 255, controllerFan);
+      MENU_ITEM_EDIT_CALLBACK(int8, MSG_CONTROLLER_FAN_IDLE_SPEED, &controllerFan_Idle_Speed, 0, 255, controllerFan);
       MENU_ITEM_EDIT_CALLBACK(bool, MSG_CONTROLLER_FAN_AUTO_ON, (bool*)&controllerFan_AutoMode, controllerFan);
       if (controllerFan_AutoMode) {
+        MENU_ITEM_EDIT_CALLBACK(int8, MSG_CONTROLLER_FAN_SPEED, &controllerFan_Speed, 0, 255, controllerFan);
         MENU_ITEM_EDIT_CALLBACK(int4, MSG_CONTROLLER_FAN_DURATION, &controllerFan_Duration, 0, 4800, controllerFan);
       }
       END_MENU();

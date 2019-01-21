@@ -504,6 +504,7 @@ float soft_endstop_min[XYZ] = { X_MIN_BED, Y_MIN_BED, Z_MIN_POS },
 #if ENABLED(USE_CONTROLLER_FAN)
   int controllerFanSpeed;
   uint8_t controllerFan_Speed;
+  uint8_t controllerFan_Idle_Speed;
   uint16_t controllerFan_Duration;
   bool controllerFan_AutoMode;
 #endif
@@ -14529,12 +14530,13 @@ void prepare_move_to_destination() {
       }
 
       // Fan off if no steppers have been enabled for CONTROLLERFAN_SECS seconds
-      const uint8_t speed = controllerFan_AutoMode ? ((lastMotorOn && PENDING(ms, lastMotorOn + (controllerFan_Duration) * 1000UL)) ? controllerFan_Speed : 0) : controllerFan_Speed;
-      controllerFanSpeed = speed;
+
+      if( controllerFan_AutoMode && (lastMotorOn && PENDING(ms, lastMotorOn + (controllerFan_Duration) * 1000UL)) ) controllerFanSpeed= controllerFan_Speed;
+      else if( controllerFan_Idle_Speed  > 0 ) controllerFanSpeed= controllerFan_Idle_Speed;
 
       // allows digital or PWM fan output to be used (see M42 handling)
-      WRITE(CONTROLLER_FAN_PIN, speed);
-      analogWrite(CONTROLLER_FAN_PIN, speed);
+      WRITE(CONTROLLER_FAN_PIN, (uint8_t) controllerFanSpeed );
+      analogWrite(CONTROLLER_FAN_PIN, (uint8_t) controllerFanSpeed );
     }
   }
 

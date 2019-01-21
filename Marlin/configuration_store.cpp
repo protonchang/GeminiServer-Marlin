@@ -222,6 +222,7 @@ typedef struct SettingsDataStruct {
   // controller fan
   //
   uint8_t controllerFan_Speed;                        // no M? # Fan Speed 0-255
+  uint8_t controllerFan_Idle_Speed;                   // no M? # Fan Speed on Idle
   uint16_t controllerFan_Duration;                    // no M? # Auto Start delay in sec.
   bool controllerFan_AutoMode;                        // no M? # Default on
 
@@ -696,6 +697,7 @@ void MarlinSettings::postprocess() {
     EEPROM_WRITE(lcd_contrast);
 
     EEPROM_WRITE(controllerFan_Speed);
+    EEPROM_WRITE(controllerFan_Idle_Speed);
     EEPROM_WRITE(controllerFan_Duration);
     EEPROM_WRITE(controllerFan_AutoMode);
 
@@ -1344,6 +1346,7 @@ void MarlinSettings::postprocess() {
       #if ENABLED(USE_CONTROLLER_FAN) && ENABLED(CONTROLLER_FAN_MENU)
         EEPROM_READ(controllerFan_Speed);
         EEPROM_READ(controllerFan_Duration);
+        EEPROM_READ(controllerFan_Idle_Speed);
         EEPROM_READ(controllerFan_AutoMode);
       #else
         EEPROM_READ(dummyb);
@@ -1956,6 +1959,7 @@ void MarlinSettings::reset() {
 
   #if ENABLED(USE_CONTROLLER_FAN) && ENABLED(CONTROLLER_FAN_MENU)
    controllerFan_Speed = CONTROLLERFAN_SPEED; // 0-255
+   controllerFan_Idle_Speed = CONTROLLERFAN_IDLE_SPEED; // 0-255
    controllerFan_Duration= CONTROLLERFAN_SECS; // SECONDS
    controllerFan_AutoMode= true; // Default true
   #endif
