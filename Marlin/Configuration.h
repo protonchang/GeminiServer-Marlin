@@ -82,7 +82,7 @@
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
 #define STRING_CONFIG_H_AUTHOR "(Erkan, Anycubic 4MAX)" // Who made the changes.
-#define SHOW_BOOTSCREEN
+//#define SHOW_BOOTSCREEN
 #define STRING_SPLASH_LINE1 SHORT_BUILD_VERSION // will be shown during bootup in line 1
 #define STRING_SPLASH_LINE2 WEBSITE_URL         // will be shown during bootup in line 2
 
@@ -1026,14 +1026,14 @@
 #if ENABLED(AUTO_BED_LEVELING_LINEAR) || ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 8
+  #define GRID_MAX_POINTS_X 10
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   // Set the boundaries for probing (where the probe can reach).
-  #define LEFT_PROBE_BED_POSITION X_PROBE_OFFSET_FROM_EXTRUDER
-  #define RIGHT_PROBE_BED_POSITION (X_BED_SIZE - X_PROBE_OFFSET_FROM_EXTRUDER)
-  #define FRONT_PROBE_BED_POSITION X_PROBE_OFFSET_FROM_EXTRUDER // could be Y_PROBE_OFFSET, but its 0
-  #define BACK_PROBE_BED_POSITION (Y_BED_SIZE - X_PROBE_OFFSET_FROM_EXTRUDER)
+  #define LEFT_PROBE_BED_POSITION   X_PROBE_OFFSET_FROM_EXTRUDER
+  #define RIGHT_PROBE_BED_POSITION  X_BED_SIZE -11 // (X_BED_SIZE - X_PROBE_OFFSET_FROM_EXTRUDER)
+  #define FRONT_PROBE_BED_POSITION  10 // could be X_PROBE_OFFSET_FROM_EXTRUDER or  Y_PROBE_OFFSET, but its 0
+  #define BACK_PROBE_BED_POSITION   Y_BED_SIZE -11  // (Y_BED_SIZE - X_PROBE_OFFSET_FROM_EXTRUDER)
 
   // Probe along the Y axis, advancing X after each column
   //#define PROBE_Y_FIRST
@@ -1891,7 +1891,7 @@
   #define NEOPIXEL_PIXELS 39         // Number of LEDs in the strip
   #define NEOPIXEL_IS_SEQUENTIAL     // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.
   #define NEOPIXEL_BRIGHTNESS 200    // Initial brightness (0-255)
-  #define NEOPIXEL_STARTUP_TEST      // Cycle through colors at startup
+  //#define NEOPIXEL_STARTUP_TEST      // Cycle through colors at startup
 #endif
 
 /**
