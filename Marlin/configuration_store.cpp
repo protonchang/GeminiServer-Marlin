@@ -37,7 +37,7 @@
  */
 
 // Change EEPROM version if the structure changes
-#define EEPROM_VERSION "V55"
+#define EEPROM_VERSION "V56"
 #define EEPROM_OFFSET 100
 
 // Check the integrity of data offsets.
@@ -696,10 +696,15 @@ void MarlinSettings::postprocess() {
     #endif
     EEPROM_WRITE(lcd_contrast);
 
-    EEPROM_WRITE(controllerFan_Speed);
-    EEPROM_WRITE(controllerFan_Idle_Speed);
-    EEPROM_WRITE(controllerFan_Duration);
-    EEPROM_WRITE(controllerFan_AutoMode);
+    #if DISABLED(USE_CONTROLLER_FAN) && DISABLED(CONTROLLER_FAN_MENU)
+      dummy = 0;
+      for (uint8_t q = 3; q--;) EEPROM_WRITE(dummy);
+    #else
+      EEPROM_WRITE(controllerFan_Speed);
+      EEPROM_WRITE(controllerFan_Idle_Speed);
+      EEPROM_WRITE(controllerFan_Duration);
+      EEPROM_WRITE(controllerFan_AutoMode);
+    #endif
 
     #if DISABLED(FWRETRACT)
       const bool autoretract_enabled = false;
@@ -1345,12 +1350,11 @@ void MarlinSettings::postprocess() {
 
       #if ENABLED(USE_CONTROLLER_FAN) && ENABLED(CONTROLLER_FAN_MENU)
         EEPROM_READ(controllerFan_Speed);
-        EEPROM_READ(controllerFan_Duration);
         EEPROM_READ(controllerFan_Idle_Speed);
+        EEPROM_READ(controllerFan_Duration);
         EEPROM_READ(controllerFan_AutoMode);
       #else
-        EEPROM_READ(dummyb);
-        for (uint8_t q=2; q--;) EEPROM_READ(dummy);
+        for (uint8_t q=3; q--;) EEPROM_READ(dummy);
       #endif
 
       //
