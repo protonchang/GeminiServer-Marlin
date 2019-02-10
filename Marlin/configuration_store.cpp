@@ -696,14 +696,14 @@ void MarlinSettings::postprocess() {
     #endif
     EEPROM_WRITE(lcd_contrast);
 
-    #if DISABLED(USE_CONTROLLER_FAN) && DISABLED(CONTROLLER_FAN_MENU)
-      dummy = 0;
-      for (uint8_t q = 3; q--;) EEPROM_WRITE(dummy);
-    #else
+    #if ENABLED(USE_CONTROLLER_FAN) && ENABLED(CONTROLLER_FAN_MENU)
       EEPROM_WRITE(controllerFan_Speed);
       EEPROM_WRITE(controllerFan_Idle_Speed);
       EEPROM_WRITE(controllerFan_Duration);
       EEPROM_WRITE(controllerFan_AutoMode);
+    #else
+      dummy = 0;
+      for (uint8_t q = 3; q--;) EEPROM_WRITE(dummy);
     #endif
 
     #if DISABLED(FWRETRACT)
