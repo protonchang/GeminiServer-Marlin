@@ -316,7 +316,7 @@ void MarlinSettings::postprocess() {
   #endif
 
   #if ENABLED(PIDTEMP)
-    thermalManager.updatePID();
+    thermalManager.update_pid();
   #endif
 
   #if DISABLED(NO_VOLUMETRICS)
