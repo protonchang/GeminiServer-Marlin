@@ -382,7 +382,19 @@
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
 
-  // Ultimaker
+  // 4MAX with PID Autotune
+  // my 4MAX Printer: 7of9 - PID - Hotend
+  //#define DEFAULT_Kp 12.97
+  //#define DEFAULT_Ki 0.72
+  //#define DEFAULT_Kd 58.44
+
+  // my 4MAX Printer: vg3r - PID - Hotend
+  //#define DEFAULT_Kp 13.74
+  //#define DEFAULT_Ki 0.72
+  //#define DEFAULT_Kd 65.85
+
+
+  // Default 4MAX
   #define DEFAULT_Kp 22.2
   #define DEFAULT_Ki 1.08
   #define DEFAULT_Kd 114
@@ -416,7 +428,7 @@
  * heater. If your configuration is significantly different than this and you don't understand
  * the issues involved, don't use bed PID until someone else verifies that your hardware works.
  */
-//#define PIDTEMPBED
+#define PIDTEMPBED
 
 //#define BED_LIMIT_SWITCHING
 
@@ -437,6 +449,19 @@
   #define DEFAULT_bedKp 22.20
   #define DEFAULT_bedKi 1.08
   #define DEFAULT_bedKd 114.00
+
+  // 4MAX with PID Autotune
+  // my 4MAX Printer: 7of9 - PID - BED
+  //#define DEFAULT_bedKp 266.39
+  //#define DEFAULT_bedKi 51.57
+  //#define DEFAULT_bedKd 344.01
+
+  // 4MAX with PID Autotune
+  // my 4MAX Printer: vg3r - PID - BED
+  //#define DEFAULT_bedKp 213.67
+  //#define DEFAULT_bedKi 42.07
+  //#define DEFAULT_bedKd 271.31
+
 
   //120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   //from pidautotune
@@ -611,7 +636,15 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4]]]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 92.60 }
+//#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 92.60 }
+
+// my 4MAX Printer: 7of9 - Steps - Filament
+//#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 104.25 }
+
+// my 4MAX Printer: vg3r - Steps - Filament
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 100.96 }
+
+
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -782,6 +815,10 @@
  */
 #define X_PROBE_OFFSET_FROM_EXTRUDER 37     // X offset: -left  +right  [of the nozzle]
 #define Y_PROBE_OFFSET_FROM_EXTRUDER 0      // Y offset: -front +behind [the nozzle]
+
+// my 4MAX Printer: 7of9 - Offset
+//#define Z_PROBE_OFFSET_FROM_EXTRUDER -0.26  // Z offset: -below +above  [the nozzle]
+// my 4MAX Printer: vg3r - Offset
 #define Z_PROBE_OFFSET_FROM_EXTRUDER -0.64  // Z offset: -below +above  [the nozzle]
 
 // Certain types of probes need to stay away from edges

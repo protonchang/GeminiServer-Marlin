@@ -8333,6 +8333,24 @@ inline void gcode_M105() {
       #endif // EXTRA_FAN_SPEED
       const uint16_t s = parser.ushortval('S', 255);
       fanSpeeds[p] = MIN(s, 255U);
+/*
+      // Controller fan with a fixed fan index of 9 and new Argument C!
+      #if ENABLED(USE_CONTROLLER_FAN)
+      if(p == 2) {
+        const int16_t c = parser.intval('C');
+        if (c > 0) {
+          switch (c) {
+             case 1: // 1 - CONTROLLERFAN_IDLE_SPEED
+              controllerFan_Idle_Speed = MIN(s, 255U);
+              break;
+            default: // 0 - CONTROLLERFAN_SPEED
+              controllerFan_Speed= MIN(s, 255U);
+              break;
+          }
+        }
+      }
+      #endif //USE_CONTROLLER_FAN
+*/
     }
   }
 
@@ -8342,6 +8360,24 @@ inline void gcode_M105() {
   inline void gcode_M107() {
     const uint16_t p = parser.ushortval('P');
     if (p < FAN_COUNT) fanSpeeds[p] = 0;
+/*
+   // Controller fan with a fixed fan index of 9!
+    #if ENABLED(USE_CONTROLLER_FAN)
+    if(p == 2) {
+      const int16_t c = parser.intval('C');
+      if (c > 0) {
+        switch (c) {
+           case 1: // 1 - CONTROLLERFAN_IDLE_SPEED
+            controllerFan_Idle_Speed = 0;
+            break;
+          default: // 0 - CONTROLLERFAN_SPEED
+            controllerFan_Speed= 0;
+            break;
+        }
+      }
+    }
+    #endif //USE_CONTROLLER_FAN
+*/
   }
 
 #endif // FAN_COUNT > 0
