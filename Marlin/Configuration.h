@@ -2549,18 +2549,17 @@
     //#define NEOPIXEL2_PIN     -1                    // Second neopixel not using
   #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
     //#define NEOPIXEL_PIN         P1_24                // Is define in pins!
-    //#define NEOPIXEL2_PIN        P1_25                // Second neopixel not using
+    #define NEOPIXEL2_PIN        P1_25                // Second neopixel not using
   #else
     //#define NEOPIXEL_PIN      -1                    // Define first neopixel pin!
     //#define NEOPIXEL2_PIN     -1                    // Optional - define second neopixel pin.
   #endif
   
-  #define NEOPIXEL_PIXELS         64                  // Number of LEDs in the strip
-  //#define NEOPIXEL2_PIXELS         8                  // Number of LEDs in the strip
-  //Change me: 64 is for testing. Original printers have 39 pixels.         
+  #define NEOPIXEL_PIXELS         39                  // Number of LEDs in the strip
+  #define NEOPIXEL2_PIXELS         8                  // Number of LEDs in the strip
   
   #define NEOPIXEL_IS_SEQUENTIAL                      // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.
-  #define NEOPIXEL_BRIGHTNESS     200                 // Initial brightness (0-255)
+  #define NEOPIXEL_BRIGHTNESS     255                 // Initial brightness (0-255)
   
   //#define NEOPIXEL_STARTUP_TEST                     // Cycle through colors at startup
   #define NEOPIXEL_TEST_PIXEL                         // Enable NEOPIXEL test menu

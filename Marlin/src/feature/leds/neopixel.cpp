@@ -156,7 +156,7 @@ void Marlin_NeoPixel::init() {
 
   #if ENABLED(LED_USER_PRESET_STARTUP)
     fill_color(adaneo1.Color(LED_USER_PRESET_RED, LED_USER_PRESET_GREEN, LED_USER_PRESET_BLUE, LED_USER_PRESET_WHITE),0, pixels());
-  //#else
+  #else
     fill_color(adaneo1.Color(0, 0, 0, 0), 0, pixels());
   #endif
 }

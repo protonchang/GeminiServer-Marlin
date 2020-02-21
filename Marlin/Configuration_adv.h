@@ -463,13 +463,13 @@
  * M355 Case Light on-off / brightness
  */
 #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
- //#define CASE_LIGHT_ENABLE
+ #define CASE_LIGHT_ENABLE
 #else // ANYCUBIC_4MAX_DEFAULT
 //#define CASE_LIGHT_ENABLE
 #endif
 
 #if ENABLED(CASE_LIGHT_ENABLE)
-  #define CASE_LIGHT_PIN                P1_25   // Override the default pin if needed 
+  #define CASE_LIGHT_PIN                NEOPIXEL_PIN   // Override the default pin if needed 
   #define INVERT_CASE_LIGHT             false   // Set true if Case Light is ON when pin is LOW
   #define CASE_LIGHT_DEFAULT_ON         true    // Set default power-up state on
   #define CASE_LIGHT_DEFAULT_BRIGHTNESS 255     // Set default power-up brightness (0-255, requires PWM pin)
@@ -1008,7 +1008,7 @@
       #define LED_USER_PRESET_GREEN        0  // User defined GREEN value
       #define LED_USER_PRESET_BLUE         0  // User defined BLUE value
       #define LED_USER_PRESET_WHITE        0  // User defined WHITE value
-      #define LED_USER_PRESET_BRIGHTNESS 128  // User defined intensity
+      #define LED_USER_PRESET_BRIGHTNESS 255  // User defined intensity
       #define LED_USER_PRESET_STARTUP         // Have the printer display the user preset color on startup
     #endif
   #endif

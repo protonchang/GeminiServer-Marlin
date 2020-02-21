@@ -26,11 +26,17 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_LCD_MENU && ENABLED(LED_CONTROL_MENU)
+#if HAS_LCD_MENU && EITHER(LED_CONTROL_MENU, CASE_LIGHT_MENU)
 
 #include "menu.h"
-#include "../../feature/leds/leds.h"
+#if ENABLED(LED_CONTROL_MENU)
+  #include "../../feature/leds/leds.h"
+#endif
+#if ENABLED(CASE_LIGHT_MENU)
+  #include "../../feature/caselight.h"
+#endif
 
+#if ENABLED(LED_CONTROL_MENU)
 void menu_led_custom() {
   START_MENU();
   BACK_ITEM(MSG_LED_CONTROL);
@@ -63,23 +69,56 @@ void menu_led_presets() {
   #endif
   END_MENU();
 }
+#endif
 
 void menu_led() {
   START_MENU();
-  BACK_ITEM(MSG_MAIN);
-  bool led_on = leds.lights_on;
-  EDIT_ITEM(bool, MSG_LEDS, &led_on, leds.toggle);
-  if(led_on) {
-    #if ENABLED(NEOPIXEL_LED)
-      EDIT_ITEM_FAST(percent, MSG_LED_BRIGHTNESS,  &leds.color.i, 0, 255, leds.update, true);
-    #endif
-    SUBMENU(MSG_CUSTOM_LEDS, menu_led_custom);
-    SUBMENU(MSG_LED_PRESETS, menu_led_presets);
-    #if ENABLED(NEOPIXEL_TEST_PIXEL)
-      ACTION_ITEM(MSG_LED_TEST_NEOPIXEL, leds.test_neo_pixel);
-    #endif
-  }
+  BACK_ITEM(MSG_CONFIGURATION);
+  bool led_on;
+  #if ENABLED(CASE_LIGHT_MENU)
+    #if DISABLED(CASE_LIGHT_NO_BRIGHTNESS)
+    if (true
+      #if DISABLED(CASE_LIGHT_USE_NEOPIXEL)
+        && PWM_PIN(CASE_LIGHT_PIN)
+      #endif
+    )
+    {
+      #if DISABLED(CASE_LIGHT_NO_BRIGHTNESS)
+        EDIT_ITEM(bool, MSG_CASE_LIGHT, (bool*)&case_light_on, update_case_light);
+        led_on=case_light_on;
+        if(led_on) {
+          EDIT_ITEM(percent, MSG_CASE_LIGHT_BRIGHTNESS, &case_light_brightness, 0, 255, update_case_light, true);
+        }
+      #else
+        #if ENABLED(LED_CONTROL_MENU)
+          led_on = leds.lights_on;
+          EDIT_ITEM(bool, MSG_LEDS, &led_on, leds.toggle);
+        #endif
+      #endif
+    }
+    else
+  #endif
+    {
+      EDIT_ITEM(bool, MSG_CASE_LIGHT, (bool*)&case_light_on, update_case_light);
+      led_on=case_light_on;
+    }
+  #endif
+
+  #if ENABLED(LED_CONTROL_MENU)
+    if(led_on) {
+      #if ENABLED(NEOPIXEL_LED) 
+        #if !(ENABLED(CASE_LIGHT_MENU) && DISABLED(CASE_LIGHT_NO_BRIGHTNESS))
+          EDIT_ITEM_FAST(percent, MSG_LED_BRIGHTNESS,  &leds.color.i, 0, 255, leds.update, true);
+        #endif
+      #endif
+      SUBMENU(MSG_CUSTOM_LEDS, menu_led_custom);
+      SUBMENU(MSG_LED_PRESETS, menu_led_presets);
+      #if ENABLED(NEOPIXEL_TEST_PIXEL)
+        ACTION_ITEM(MSG_LED_TEST_NEOPIXEL, leds.test_neo_pixel);
+      #endif
+    }
+  #endif
   END_MENU();
 }
 
-#endif // HAS_LCD_MENU && LED_CONTROL_MENU
+#endif // HAS_LCD_MENU && EITHER(LED_CONTROL_MENU, CASE_LIGHT_MENU)
