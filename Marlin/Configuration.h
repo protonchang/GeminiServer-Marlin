@@ -584,53 +584,70 @@
   //   M303 E0 S240 C8  ; Start auto PID tune
 
 #if ENABLED(ANYCUBIC_4MAX_VG3R)
-  // 4MAX with PID Autotune
-  // my 4MAX Printer: vg3r - PID - Hotend with silicone heater cover
-  //
-  // Measurement#:   1       2       3      4      5
-  // Degrees°C:      S240    S240    S240   S240   S230   ~218
-  // DEFAULT_Kp:     15.90   13.92   14.43  13.79  13.84  ~14.376
-  // DEFAULT_Ki:     0.93    0.79    0.81   0.76   0.77   ~0.812
-  // DEFAULT_Kd:     67.72   61.55   64.40  62.98  62.37  ~63.804
-  #define DEFAULT_Kp 14.38
-  #define DEFAULT_Ki 0.81
-  #define DEFAULT_Kd 63.80
-  // Or save/change with: M301 E0 P14.38 I0.81 D63.80;
+  /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
+   * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
+   *                         M106 E0 S255     ; set Fan to 100%
+   *                         M303 E0 S240 C8  ; Start PID autotune
+   * Attention - Start Temperatur: Ideal is start from room temperature!
+   * 
+   * Measurement:  | #1    | #2     |
+   * Start °C:     | 36°C  | 39.6°C | ~
+   * Target °C:    | S240  | S240   | ~
+   * Hotend_Kp:    | 16.99 | 16.96  | ~ 16.975
+   * Hotend_Ki:    | 01.18 | 01.14  | ~ 01.160
+   * Hotend_Kd:    | 61.22 | 62.87  | ~ 62.045
+   * 
+   * Save/change with: M301 E0 P16.975 I01.160 D62.045;
+   */
+  #define DEFAULT_Kp 16.975
+  #define DEFAULT_Ki 01.160
+  #define DEFAULT_Kd 62.045
 
 #elif ENABLED(ANYCUBIC_4MAX_7OF9)
-  // 4MAX with PID Autotune
-  // my 4MAX Printer: 7of9 - PID - Hotend with silicone heater cover
-  //
-  //  Measurement#:   1       2       3       4
-  //  Degrees °C:     S235    S235    S220    S250   ~235
-  //  noozle_Kp:      19.30   18.12   18.33   18.26  ~18.5025
-  //  noozle_Ki:      1.38    1.26    1.28    1.24   ~1.29
-  //  noozle_Kd:      67.59   65.31   65.68   67.32  ~66.475
+  /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
+   * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
+   *                         M106 E0 S255     ; set Fan to 100%
+   *                         M303 E0 S240 C8  ; Start PID autotune
+   * Attention - Start Temperatur: Ideal is start from room temperature!
+   * 
+   * Measurement:  | #1    |#2      | #Aprox.
+   * Start °C:     | 28°C  | 32.2°C | ~
+   * Target °C:    | S240  | S240   | ~
+   * Hotend_Kp:    | 19.70 | 20.51  | ~ 20.105
+   * Hotend_Ki:    | 01.32 | 01.38  | ~ 01.35
+   * Hotend_Kd:    | 73.41 | 76.42  | ~ 74.915
+   * 
+   * Save/change with: M301 E0 P20.105 I01.35 D75.915;
+   */
+  #define DEFAULT_Kp 20.105
+  #define DEFAULT_Ki 01.350
+  #define DEFAULT_Kd 75.915
+
+#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
+   * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
+   *                         M106 E0 S255     ; set Fan to 100%
+   *                         M303 E0 S240 C8  ; Start PID autotune
+   * Attention - Start Temperatur: Ideal is start from room temperature!
+   * 
+   * Measurement:  | #1    |#2      | #3     | #4     | #Aprox.
+   * Start °C:     | 24°C  | 38.8°C | 30.2°C | 00.0°C | ~
+   * Target °C:    | S235  | S235   | S220   | S250   | ~
+   * Hotend_Kp:    | 19.30 | 18.12  | 18.33  | 18.26  | ~
+   * Hotend_Ki:    | 01.38 | 1.26   | 1.28   | 1.24   | ~
+   * Hotend_Kd:    | 67.59 | 65.31  | 65.68  | 67.32  | ~
+   * 
+   * Save/change with: M301 E0 P14.38 I0.81 D63.80;
+   */
   #define DEFAULT_Kp 18.50
   #define DEFAULT_Ki 1.29
   #define DEFAULT_Kd 66.47
-  // Or save/change with: M301 E0 P18.50 I1.29 D66.47;
 
 #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
   // Default 4MAX pre-configured hotend PIDs
-  //
   #define DEFAULT_Kp 22.2
   #define DEFAULT_Ki 1.08
   #define DEFAULT_Kd 114
-  // Save/change with: M301 E0 P22.2 I1.08 D114;
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
-  // 4MAX with PID Autotune
-  // my 4MAX Printer: 7of9 - PID - Hotend with silicone heater cover
-  //
-  //  Measurement#:   1       2       3       4
-  //  Degrees °C:     S235    S235    S220    S250   ~235
-  //  noozle_Kp:      19.30   18.12   18.33   18.26  ~18.5025
-  //  noozle_Ki:      1.38    1.26    1.28    1.24   ~1.29
-  //  noozle_Kd:      67.59   65.31   65.68   67.32  ~66.475
-  #define DEFAULT_Kp 18.50
-  #define DEFAULT_Ki 1.29
-  #define DEFAULT_Kd 66.47
-  // Or save/change with: M301 E0 P18.50 I1.29 D66.47;
 
 #endif
 
@@ -675,53 +692,68 @@
     //#define MIN_BED_POWER 0
     //#define PID_BED_DEBUG // Sends debug data to the serial port.
 
-  #if ENABLED(ANYCUBIC_4MAX_VG3R)
-    // 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - BED
-    //
-    // Measurement#:   1       2       3       4       5
-    // Degrees°C: 	   S90     S90     S90     S90     S85     ~ 89
-    // bedKp:          364.77  339.54  347.21  312.70  317.89  ~ 336.422
-    // bedKi:          71.82   66.85   68.37   61.57   61.60   ~ 66.042
-    // bedKd:          463.16  431.13  440.83  397.01  410.16  ~ 428.458
-    #define DEFAULT_bedKp 336.42
-    #define DEFAULT_bedKi 66.04
-    #define DEFAULT_bedKd 428.46
-    // Or save/change with: M304 P336.42 I66.04 D428.49
+   #if ENABLED(ANYCUBIC_4MAX_VG3R)
+    /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - BED
+    * Autotuned with command: M304 P0 I0 D0    ; ZERO current PID Info
+    *                         M303 E-1 S90 C8  ; Start PID Autotune
+    * Attention - Start Temperatur: Ideal is start from room temperature!
+    * 
+    * Measurement:  | #1     | #2     | #Aprox.
+    * Start °C:     | 27.3°C | 31.2°C | ~
+    * Target °C:    | S90    | S90    | ~
+    * bedKp:        | 098.60 | 099.37 | ~ 098.98
+    * bedKi:        | 019.10 | 019.59 | ~ 019.34
+    * bedKd:        | 339.25 | 336.10 | ~ 337.67
+    * 
+    * Save/change with: M304 P098.98 I019.34 D337.67
+    */
+    #define DEFAULT_bedKp 098.98
+    #define DEFAULT_bedKi 019.34
+    #define DEFAULT_bedKd 337.67
 
   #elif ENABLED(ANYCUBIC_4MAX_7OF9)
-    // 4MAX with PID Autotune - my 4MAX Printer: 7of9 - PID - BED
-    //
-    //  Autotuned with command: M303 E-1 S90 C8
-    //  Measurement #: 1       2       3       4
-    //  Degrees°C:     S90     S90     S60     S60     ~ 75
-    //  bedKp:         126.18  119.52  70.09   75.08   ~ 97.72
-    //  bedKi:         24.45   23.54   13.16   14.32   ~ 18.87
-    //  bedKd:         434.11  404.67  248.76  262.42  ~ 337.49
-    #define DEFAULT_bedKp 119.52  //#2
-    #define DEFAULT_bedKi 23.54   //#2
-    #define DEFAULT_bedKd 404.67  //#2
-    // Or save/change with: M304 P119.52 I23.54 D404.67
+    /** 4MAX with PID Autotune - my 4MAX Printer: 7of9 - PID - BED
+    * Autotuned with command: M304 P0 I0 D0    ; ZERO current PID Info
+    *                         M303 E-1 S90 C8  ; Start PID Autotune
+    * Attention - Start Temperatur: Ideal is start from room temperature!
+    * 
+    * Measurement:  | #1     | #2     | #Aprox. from 3+4
+    * Start °C:     | 30.2°C | 31.2°C | ~
+    * Target °C:    | S90    | S90    | ~
+    * bedKp:        | 108.35 | 110.07 | ~ 109.21
+    * bedKi:        | 021.33 | 021.67 | ~ 021.50
+    * bedKd:        | 366.88 | 372.67 | ~ 369.77
+    * 
+    * Save/change with: M304 P109.21 I021.50 D369.77
+    */
+    #define DEFAULT_bedKp 109.21
+    #define DEFAULT_bedKi 021.50
+    #define DEFAULT_bedKd 369.77
+
+  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+    /** 4MAX with PID Autotune - my 4MAX Printer: 7of9 - PID - BED
+    * Autotuned with command: M304 P0 I0 D0    ; ZERO current PID Info
+    *                         M303 E-1 S90 C8  ; Start PID Autotune
+    * Attention - Start Temperatur: Ideal is start from room temperature!
+    * 
+    * Measurement:  | #1     | #2     | #Aprox. from 3+4
+    * Start °C:     | 30.2°C | 31.2°C | ~
+    * Target °C:    | S90    | S90    | ~
+    * bedKp:        | 108.35 | 110.07 | ~ 109.21
+    * bedKi:        | 021.33 | 021.67 | ~ 021.50
+    * bedKd:        | 366.88 | 372.67 | ~ 369.77
+    * 
+    * Save/change with: M304 P109.21 I021.50 D369.77
+    */
+    #define DEFAULT_bedKp 109.21
+    #define DEFAULT_bedKi 021.50
+    #define DEFAULT_bedKd 369.77
 
   #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
     // Factory Default for ANYCUBIC 4MAX
-    //
     #define  DEFAULT_bedKp 10.00
     #define  DEFAULT_bedKi .023
     #define  DEFAULT_bedKd 305.4
-    // Save/change with: M304 P10.00 I0.023 D305.4
-  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
-    // 4MAX with PID Autotune - my 4MAX Printer: 7of9 - PID - BED
-    //
-    //  Autotuned with command: M303 E-1 S90 C8
-    //  Measurement #: 1       2       3       4
-    //  Degrees°C:     S90     S90     S60     S60     ~ 75
-    //  bedKp:         126.18  119.52  70.09   75.08   ~ 97.72
-    //  bedKi:         24.45   23.54   13.16   14.32   ~ 18.87
-    //  bedKd:         434.11  404.67  248.76  262.42  ~ 337.49
-    #define DEFAULT_bedKp 119.52  //#2
-    #define DEFAULT_bedKi 23.54   //#2
-    #define DEFAULT_bedKd 404.67  //#2
-    // Or save/change with: M304 P119.52 I23.54 D404.67
   #endif
 
 #endif // PIDTEMPBED
