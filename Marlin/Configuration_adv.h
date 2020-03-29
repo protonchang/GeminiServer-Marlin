@@ -338,11 +338,8 @@
  * Controller Fan
  * To cool down the stepper drivers and MOSFETs.
  *
- * The fan will turn on automatically whenever any stepper is enabled
- * and turn off after a set period after all steppers are turned off.
- *
- * Gcodes: M710 ; Return current Settings
- * M710 I127 A1 S255 D160 ; Set controller Fan idle Speed 50% (I127), AutoMode On (A1), Fan speed 100% (S100), Duration to 160 Secs (D160)
+ * The fan turns on automatically whenever any driver is enabled and turns
+ * off (or reduces to idle speed) shortly after drivers are turned off.
  */
 #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
   #define USE_CONTROLLER_FAN
@@ -351,19 +348,26 @@
       #define CONTROLLER_FAN_PIN          7    // Set a custom pin for the controller fan
     #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
       #define CONTROLLER_FAN_PIN       P1_00 // PWRDET - PS_ON_PIN
-    #else 
     #endif
-    #define CONTROLLERFAN_SPEED_MIN    20    // Default 0;    Range 1-255; 255 is fullspeed; Min. Fan PWM value
-    #define CONTROLLERFAN_SECS         30    // Default 60;   Duration in seconds for the fan to run after all motors are disabled
-    #define CONTROLLERFAN_SPEED        255   // Default 255;  Range 0-255; 255 is fullspeed; Controller fan speed is on, if either stepper/motor is enabled
-    #define CONTROLLERFAN_IDLE_SPEED   21    // Default 100;  Range 0-255; 255 is fullspeed; Controller fan idle speed, when all motors are disabled
-    #define CONTROLLER_FAN_MENU              // Enables controller FAN in Settings menu and EEPROM save/restore options
+    #define CONTROLLERFAN_SPEED_MIN      20 // (0-255) Minimum speed. (If set below this value the fan is turned off.)
+    #define CONTROLLERFAN_IDLE_TIME      60 // (seconds) Extra time to keep the fan running after disabling motors
+    #define CONTROLLERFAN_SPEED_ACTIVE  255 // (0-255) Active speed, used when any motor is enabled
+    #define CONTROLLERFAN_SPEED_IDLE     21 // (0-255) Idle speed, used when motors are disabled
+    #define CONTROLLER_FAN_EDITABLE         // Enable M710 configurable settings
+    //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
+    #if ENABLED(CONTROLLER_FAN_EDITABLE)
+      #define CONTROLLER_FAN_MENU          // Enable the Controller Fan submenu
+    #endif
   #else
-    #define CONTROLLERFAN_SPEED_MIN    0     // Default 0;    Range 1-255; 255 is fullspeed; Min. Fan PWM value
-    #define CONTROLLERFAN_SECS         60    // Default 60;   Duration in seconds for the fan to run after all motors are disabled
-    #define CONTROLLERFAN_SPEED        255   // Default 255;  Range 0-255; 255 is fullspeed; Controller fan speed is on, if either stepper/motor is enabled
-    #define CONTROLLERFAN_IDLE_SPEED   100   // Default 100;  Range 0-255; 255 is fullspeed; Controller fan idle speed, when all motors are disabled
-    #define CONTROLLER_FAN_MENU              // Enables controller FAN in Settings menu and EEPROM save/restore options
+    #define CONTROLLERFAN_SPEED_MIN      0 // (0-255) Minimum speed. (If set below this value the fan is turned off.)
+    #define CONTROLLERFAN_IDLE_TIME     60 // (seconds) Extra time to keep the fan running after disabling motors
+    #define CONTROLLERFAN_SPEED_ACTIVE 255 // (0-255) Active speed, used when any motor is enabled
+    #define CONTROLLERFAN_IDLE_SPEED   100 // Default 100;  Range 0-255; 255 is fullspeed; Controller fan idle speed, when all motors are disabled
+    #define CONTROLLER_FAN_EDITABLE      // Enable M710 configurable settings
+    //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
+    #if ENABLED(CONTROLLER_FAN_EDITABLE)
+      #define CONTROLLER_FAN_MENU          // Enable the Controller Fan submenu
+    #endif
   #endif
 #endif
 // When first starting the main fan, run it at full speed for the
@@ -433,7 +437,7 @@
 #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define E0_AUTO_FAN_PIN 44
 #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
-  #define E0_AUTO_FAN_PIN FAN1_PIN  
+  #define E0_AUTO_FAN_PIN FAN1_PIN
 #else
   #define E0_AUTO_FAN_PIN -1
 #endif
@@ -471,13 +475,13 @@
 #endif
 
 #if ENABLED(CASE_LIGHT_ENABLE)
-  #define CASE_LIGHT_PIN                NEOPIXEL_PIN   // Override the default pin if needed 
+  #define CASE_LIGHT_PIN                NEOPIXEL_PIN   // Override the default pin if needed
   #define INVERT_CASE_LIGHT             false   // Set true if Case Light is ON when pin is LOW
   #define CASE_LIGHT_DEFAULT_ON         true    // Set default power-up state on
   #define CASE_LIGHT_DEFAULT_BRIGHTNESS 255     // Set default power-up brightness (0-255, requires PWM pin)
   //#define CASE_LIGHT_MAX_PWM          128     // Limit pwm
   #define CASE_LIGHT_MENU                       // Add Case Light options to the LCD menu
-  //#define CASE_LIGHT_NO_BRIGHTNESS            // Disable brightness control. Enable for non-PWM lighting. 
+  //#define CASE_LIGHT_NO_BRIGHTNESS            // Disable brightness control. Enable for non-PWM lighting.
 
   #define CASE_LIGHT_USE_NEOPIXEL               // Use Neopixel LED as case light, requires NEOPIXEL_LED.
   #if ENABLED(CASE_LIGHT_USE_NEOPIXEL)
@@ -1098,7 +1102,7 @@
    #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
     #define POWER_LOSS_RECOVERY
     #ifndef POWER_LOSS_PIN
-      #define POWER_LOSS_PIN  -1 // Not using this Pin! 
+      #define POWER_LOSS_PIN  -1 // Not using this Pin!
     #endif
    #else // ANYCUBIC_4MAX_DEFAULT
     //#define POWER_LOSS_RECOVERY
@@ -1594,10 +1598,23 @@
  * the probe to be unable to reach any points.
  */
 #if PROBE_SELECTED && !IS_KINEMATIC
-  //#define MIN_PROBE_EDGE_LEFT MIN_PROBE_EDGE
-  //#define MIN_PROBE_EDGE_RIGHT MIN_PROBE_EDGE
-  //#define MIN_PROBE_EDGE_FRONT MIN_PROBE_EDGE
-  //#define MIN_PROBE_EDGE_BACK MIN_PROBE_EDGE
+/**
+* ____________________________
+* |          Back            |
+* |      ______________      |
+* |      |            |      |
+* |      |  Printing- |      |
+* | Left |  Area      | Right|
+* |      |            |      |
+* |      |____________|      |
+* |          Front           |
+* |__________________________|
+* Set the boundaries for probing (where the probe can reach).
+*/
+  #define MIN_PROBE_EDGE_LEFT   MIN_PROBE_EDGE
+  #define MIN_PROBE_EDGE_RIGHT  MIN_PROBE_EDGE
+  #define MIN_PROBE_EDGE_FRONT  MIN_PROBE_EDGE
+  #define MIN_PROBE_EDGE_BACK   MIN_PROBE_EDGE
 #endif
 
 #if EITHER(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL)
@@ -2099,7 +2116,7 @@
   //
   #if ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
     #define RSENSE      0.075f
-  #else 
+  #else
     #define RSENSE      0.11f
   #endif
   #define HOLD_MULTIPLIER     0.5   // Scales down the holding current from run current
@@ -2421,7 +2438,7 @@
   #else
     //#define SQUARE_WAVE_STEPPING
 #endif
-  
+
   /**
    * Enable M122 debugging command for TMC stepper drivers.
    * M122 S0/1 will enable continous reporting.

@@ -100,6 +100,7 @@
 /**
  * Select the serial port on the board to use for communication with the host.
  * This allows the connection of wireless adapters (for instance) to non-default port pins.
+ * Serial port -1 is the USB emulated serial port, if available.
  * Note: The first serial port (-1 or 0) will always be used by the Arduino bootloader.
  *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
@@ -108,9 +109,6 @@
 
 /**
  * Select a secondary serial port on the board to use for communication with the host.
- * This allows the connection of wireless adapters (for instance) to non-default port pins.
- * Serial port -1 is the USB emulated serial port, if available.
- *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
 //#define SERIAL_PORT_2 -1
@@ -134,12 +132,12 @@
   #error "### ERROR: No MOTHERBOARD defined! Please check platformio.ini (default_envs!) ###"
 #else
   //
-  // Define in platformio.ini your custom 4MAX. Just comment out what device you want to build! 
+  // Define in platformio.ini your custom 4MAX. Just comment out what device you want to build!
   //
   #if (MOTHERBOARD == BOARD_TRIGORILLA_14)
     #define ANYCUBIC_4MAX
   #elif (MOTHERBOARD == BOARD_BTT_SKR_V1_4_TURBO)
-    // ANYCUBIC_4MAX_SKR_1_4_PRO specific setting can be set here! 
+    // ANYCUBIC_4MAX_SKR_1_4_PRO specific setting can be set here!
   #else
     #error "### ERROR: No Supported MOTHERBOARD defined! Please check platformio.ini ###"
   #endif
@@ -206,7 +204,7 @@
 #endif
 
 /**
- * Website where users can find Marlin source code for the binary installed on the device. 
+ * Website where users can find Marlin source code for the binary installed on the device.
  */
 #ifndef SOURCE_CODE_URL
   #define SOURCE_CODE_URL "https://github.com/GeminiServer/Marlin"
@@ -456,6 +454,7 @@
  *   331 : (3.3V scaled thermistor 1 table for MEGA)
  *   332 : (3.3V scaled thermistor 1 table for DUE)
  *     2 : 200k thermistor - ATC Semitec 204GT-2 (4.7k pullup)
+ *   202 : 200k thermistor - Copymaster 3D
  *     3 : Mendel-parts thermistor (4.7k pullup)
  *     4 : 10k thermistor !! do not use it for a hotend. It gives bad resolution at high temp. !!
  *     5 : 100K thermistor - ATC Semitec 104GT-2/104NT-4-R025H42G (Used in ParCan & J-Head) (4.7k pullup)
@@ -589,14 +588,14 @@
    *                         M106 E0 S255     ; set Fan to 100%
    *                         M303 E0 S240 C8  ; Start PID autotune
    * Attention - Start Temperatur: Ideal is start from room temperature!
-   * 
+   *
    * Measurement:  | #1    | #2     |
    * Start °C:     | 36°C  | 39.6°C | ~
    * Target °C:    | S240  | S240   | ~
    * Hotend_Kp:    | 16.99 | 16.96  | ~ 16.975
    * Hotend_Ki:    | 01.18 | 01.14  | ~ 01.160
    * Hotend_Kd:    | 61.22 | 62.87  | ~ 62.045
-   * 
+   *
    * Save/change with: M301 E0 P16.975 I01.160 D62.045;
    */
   #define DEFAULT_Kp 16.975
@@ -609,14 +608,14 @@
    *                         M106 E0 S255     ; set Fan to 100%
    *                         M303 E0 S240 C8  ; Start PID autotune
    * Attention - Start Temperatur: Ideal is start from room temperature!
-   * 
+   *
    * Measurement:  | #1    |#2      | #Aprox.
    * Start °C:     | 28°C  | 32.2°C | ~
    * Target °C:    | S240  | S240   | ~
    * Hotend_Kp:    | 19.70 | 20.51  | ~ 20.105
    * Hotend_Ki:    | 01.32 | 01.38  | ~ 01.35
    * Hotend_Kd:    | 73.41 | 76.42  | ~ 74.915
-   * 
+   *
    * Save/change with: M301 E0 P20.105 I01.35 D75.915;
    */
   #define DEFAULT_Kp 20.105
@@ -629,14 +628,14 @@
    *                         M106 E0 S255     ; set Fan to 100%
    *                         M303 E0 S240 C8  ; Start PID autotune
    * Attention - Start Temperatur: Ideal is start from room temperature!
-   * 
+   *
    * Measurement:  | #1    |#2      | #3     | #4     | #Aprox.
    * Start °C:     | 24°C  | 38.8°C | 30.2°C | 00.0°C | ~
    * Target °C:    | S235  | S235   | S220   | S250   | ~
    * Hotend_Kp:    | 19.30 | 18.12  | 18.33  | 18.26  | ~
    * Hotend_Ki:    | 01.38 | 1.26   | 1.28   | 1.24   | ~
    * Hotend_Kd:    | 67.59 | 65.31  | 65.68  | 67.32  | ~
-   * 
+   *
    * Save/change with: M301 E0 P14.38 I0.81 D63.80;
    */
   #define DEFAULT_Kp 18.50
@@ -697,14 +696,14 @@
     * Autotuned with command: M304 P0 I0 D0    ; ZERO current PID Info
     *                         M303 E-1 S90 C8  ; Start PID Autotune
     * Attention - Start Temperatur: Ideal is start from room temperature!
-    * 
+    *
     * Measurement:  | #1     | #2     | #Aprox.
     * Start °C:     | 27.3°C | 31.2°C | ~
     * Target °C:    | S90    | S90    | ~
     * bedKp:        | 098.60 | 099.37 | ~ 098.98
     * bedKi:        | 019.10 | 019.59 | ~ 019.34
     * bedKd:        | 339.25 | 336.10 | ~ 337.67
-    * 
+    *
     * Save/change with: M304 P098.98 I019.34 D337.67
     */
     #define DEFAULT_bedKp 098.98
@@ -716,14 +715,14 @@
     * Autotuned with command: M304 P0 I0 D0    ; ZERO current PID Info
     *                         M303 E-1 S90 C8  ; Start PID Autotune
     * Attention - Start Temperatur: Ideal is start from room temperature!
-    * 
+    *
     * Measurement:  | #1     | #2     | #Aprox. from 3+4
     * Start °C:     | 30.2°C | 31.2°C | ~
     * Target °C:    | S90    | S90    | ~
     * bedKp:        | 108.35 | 110.07 | ~ 109.21
     * bedKi:        | 021.33 | 021.67 | ~ 021.50
     * bedKd:        | 366.88 | 372.67 | ~ 369.77
-    * 
+    *
     * Save/change with: M304 P109.21 I021.50 D369.77
     */
     #define DEFAULT_bedKp 109.21
@@ -735,14 +734,14 @@
     * Autotuned with command: M304 P0 I0 D0    ; ZERO current PID Info
     *                         M303 E-1 S90 C8  ; Start PID Autotune
     * Attention - Start Temperatur: Ideal is start from room temperature!
-    * 
+    *
     * Measurement:  | #1     | #2     | #Aprox. from 3+4
     * Start °C:     | 30.2°C | 31.2°C | ~
     * Target °C:    | S90    | S90    | ~
     * bedKp:        | 108.35 | 110.07 | ~ 109.21
     * bedKi:        | 021.33 | 021.67 | ~ 021.50
     * bedKd:        | 366.88 | 372.67 | ~ 369.77
-    * 
+    *
     * Save/change with: M304 P109.21 I021.50 D369.77
     */
     #define DEFAULT_bedKp 109.21
@@ -832,13 +831,13 @@
 #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
   // Using ZMAX! Undef some pins which is using the P1_27 for ZMAX!
   #define USE_ZMAX_PLUG
-  #ifdef  Z_MAX_PIN 
+  #ifdef  Z_MAX_PIN
     #undef  Z_MAX_PIN
   #endif
   #define Z_MAX_PIN P1_27
 
   // Don't have a second Filament runout!
-  #ifdef FIL_RUNOUT2_PIN    
+  #ifdef FIL_RUNOUT2_PIN
     #undef FIL_RUNOUT2_PIN
   #endif
 
@@ -1598,23 +1597,6 @@
   // Set the number of grid points per dimension.
   #define GRID_MAX_POINTS_X 10
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
-
-//
-// ____________________________
-// |          Back            |
-// |      ______________      |
-// |      |            |      |
-// |      |  Printing- |      |
-// | Left |  Area      | Right|
-// |      |            |      |
-// |      |____________|      |
-// |          Front           |
-// |__________________________|
-// Set the boundaries for probing (where the probe can reach).
-  #define MIN_PROBE_EDGE_LEFT   MIN_PROBE_EDGE
-  #define MIN_PROBE_EDGE_RIGHT  MIN_PROBE_EDGE
-  #define MIN_PROBE_EDGE_FRONT  MIN_PROBE_EDGE
-  #define MIN_PROBE_EDGE_BACK   MIN_PROBE_EDGE
 
   // Probe along the Y axis, advancing X after each column
   //#define PROBE_Y_FIRST
@@ -2586,7 +2568,7 @@
 #if ENABLED(NEOPIXEL_LED)
   #define NEOPIXEL_TYPE   NEO_GRB                     // First neopixel type - NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)
   //#define NEOPIXEL2_TYPE  NEO_GRB                     // Optional - Second neopixel type - NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)
-  
+
   #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
     #define NEOPIXEL_PIN    SERVO3_PIN                // LED driving pin
     //#define NEOPIXEL2_PIN     -1                    // Second neopixel not using
@@ -2597,13 +2579,13 @@
     //#define NEOPIXEL_PIN      -1                    // Define first neopixel pin!
     //#define NEOPIXEL2_PIN     -1                    // Optional - define second neopixel pin.
   #endif
-  
+
   #define NEOPIXEL_PIXELS         39                  // Number of LEDs in the strip
   //#define NEOPIXEL2_PIXELS         8                  // Number of LEDs in the strip
-  
+
   #define NEOPIXEL_IS_SEQUENTIAL                      // Sequential display for temperature change - LED by LED. Disable to change all LEDs at once.
   #define NEOPIXEL_BRIGHTNESS     255                 // Initial brightness (0-255)
-  
+
   //#define NEOPIXEL_STARTUP_TEST                     // Cycle through colors at startup
   #define NEOPIXEL_TEST_PIXEL                         // Enable NEOPIXEL test menu
   #if ENABLED(NEOPIXEL_TEST_PIXEL)
@@ -2618,7 +2600,7 @@
   // Use a single Neopixel LED for static (background) lighting
   //#define NEOPIXEL_BKGD_LED_INDEX  0               // Index of the LED to use
   //#define NEOPIXEL_BKGD_COLOR { 255, 255, 255, 0 } // R, G, B, W
-  
+
 #endif
 
 /**

@@ -567,7 +567,7 @@ inline void manage_inactivity(const bool ignore_stepper_queue=false) {
   #endif
 
   #if ENABLED(USE_CONTROLLER_FAN)
-    fanController.update(); // Check if fan should be turned on to cool stepper drivers down
+    controllerFan.update(); // Check if fan should be turned on to cool stepper drivers down
   #endif
 
   #if ENABLED(AUTO_POWER_CONTROL)
@@ -984,6 +984,10 @@ void setup() {
     SETUP_RUN(leds.setup());
   #endif
 
+  #if ENABLED(USE_CONTROLLER_FAN)     // Set up fan controller to initialize also the default configurations.
+    SETUP_RUN(controllerFan.setup());
+  #endif
+
   SETUP_RUN(ui.init());
   SETUP_RUN(ui.reset_status());       // Load welcome message early. (Retained if no errors exist.)
 
@@ -994,17 +998,13 @@ void setup() {
   #if ENABLED(SDSUPPORT) && defined(SDCARD_CONNECTION) && !SD_CONNECTION_IS(LCD)
     SETUP_RUN(card.mount());          // Mount onboard / custom SD card before settings.first_load
   #endif
- 
-  #if HAS_SERVICE_INTERVALS
-    SETUP_RUN(ui.reset_status(true)); // Show service messages or keep current status
-  #endif
-
-  #if ENABLED(USE_CONTROLLER_FAN)     // USE_CONTROLLER_FAN must be initialized before EEPROM 
-    SETUP_RUN(fanController.init());  // (because fanController.init code Initialize the default configurations).
-  #endif
 
   SETUP_RUN(settings.first_load());   // Load data from EEPROM if available (or use defaults)
                                       // This also updates variables in the planner, elsewhere
+
+  #if HAS_SERVICE_INTERVALS
+    SETUP_RUN(ui.reset_status(true)); // Show service messages or keep current status
+  #endif
 
   #if ENABLED(TOUCH_BUTTONS)
     SETUP_RUN(touch.init());
