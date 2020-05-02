@@ -177,7 +177,7 @@
 
 #ifndef SHORT_BUILD_VERSION
     #define BUILD_SUFFIX  "Rel."        // Release Tag
-    #define BUILD_VERSION "2.0.5301"    // Version Info - Major.Minor.Build Build - WXYZ
+    #define BUILD_VERSION "2.0.5302"    // Version Info - Major.Minor.Build Build - WXYZ
                                         // W: Recent marlin release Build (Marlin 2.0.x)
                                         // XYZ: Last own build number
     #define SHORT_BUILD_VERSION  BUILD_PREFIX BUILD_VERSION BUILD_SUFFIX
@@ -669,7 +669,11 @@
  * heater. If your configuration is significantly different than this and you don't understand
  * the issues involved, don't use bed PID until someone else verifies that your hardware works.
  */
+#if ENABLED(ANYCUBIC_4MAX_DEFAULT)
+//#define PIDTEMPBED
+#else
 #define PIDTEMPBED
+#endif
 
 //#define BED_LIMIT_SWITCHING
 
@@ -1958,7 +1962,11 @@
  *
  * View the current statistics with M78.
  */
+#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#define PRINTCOUNTER
+#else
 //#define PRINTCOUNTER
+#endif
 
 //=============================================================================
 //============================= LCD and SD support ============================
