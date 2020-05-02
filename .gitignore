@@ -109,7 +109,7 @@ tags
 *.app
 *.i*86
 *.x86_64
-*.hex
+#*.hex
 
 # Debug files
 *.dSYM/
@@ -154,7 +154,7 @@ Configuration_Secure.h
 *.vcxproj
 *.vcxproj.user
 *.vcxproj.filters
-Release/
+#Release/
 Debug/
 __vm/
 .vs/
