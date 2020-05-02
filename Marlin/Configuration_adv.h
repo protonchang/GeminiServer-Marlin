@@ -341,14 +341,14 @@
  * The fan turns on automatically whenever any driver is enabled and turns
  * off (or reduces to idle speed) shortly after drivers are turned off.
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
-  #define USE_CONTROLLER_FAN
-  #if ENABLED(USE_CONTROLLER_FAN)
-    #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
-      #define CONTROLLER_FAN_PIN          7    // Set a custom pin for the controller fan
-    #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
-      #define CONTROLLER_FAN_PIN       P1_00 // PWRDET - PS_ON_PIN
-    #endif
+#define USE_CONTROLLER_FAN
+#if ENABLED(USE_CONTROLLER_FAN)
+  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
+    #define CONTROLLER_FAN_PIN          7    // Set a custom pin for the controller fan
+  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+    #define CONTROLLER_FAN_PIN       P1_00 // PWRDET - PS_ON_PIN
+  #endif
+  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
     #define CONTROLLERFAN_SPEED_MIN      20 // (0-255) Minimum speed. (If set below this value the fan is turned off.)
     #define CONTROLLERFAN_IDLE_TIME      60 // (seconds) Extra time to keep the fan running after disabling motors
     #define CONTROLLERFAN_SPEED_ACTIVE  255 // (0-255) Active speed, used when any motor is enabled
@@ -358,7 +358,7 @@
     #if ENABLED(CONTROLLER_FAN_EDITABLE)
       #define CONTROLLER_FAN_MENU          // Enable the Controller Fan submenu
     #endif
-  #else
+  #else // ANYCUBIC_4MAX_DEFAULT
     #define CONTROLLERFAN_SPEED_MIN      0 // (0-255) Minimum speed. (If set below this value the fan is turned off.)
     #define CONTROLLERFAN_IDLE_TIME     60 // (seconds) Extra time to keep the fan running after disabling motors
     #define CONTROLLERFAN_SPEED_ACTIVE 255 // (0-255) Active speed, used when any motor is enabled
