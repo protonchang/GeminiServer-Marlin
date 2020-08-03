@@ -1378,10 +1378,14 @@
 // @section machine
 
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define INVERT_X_DIR true
   #define INVERT_Y_DIR true
   #define INVERT_Z_DIR true
+#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #define INVERT_X_DIR false
+  #define INVERT_Y_DIR false
+  #define INVERT_Z_DIR false
 #else
   #define INVERT_X_DIR false
   #define INVERT_Y_DIR false
@@ -1393,6 +1397,8 @@
 // For direct drive extruder v9 set to true, for geared extruder set to false.
 #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
   #define INVERT_E0_DIR true
+#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #define INVERT_E0_DIR false
 #else
   #define INVERT_E0_DIR false
 #endif
