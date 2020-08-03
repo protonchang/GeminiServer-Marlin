@@ -80,10 +80,10 @@ void Marlin_NeoPixel::set_color(const uint32_t color) {
 }
 
 void Marlin_NeoPixel::set_color_startup(const uint32_t color) {
-  for (uint16_t i = 0; i < pixels(NEOPIXEL1); i++){  // i: set_pixel_color --> n Pixel index is starting from 0.
-    set_pixel_color(i, color, NEOPIXEL1);
+  for (uint16_t i = 0; i < neo.pixels(0); i++){  // i: set_pixel_color --> n Pixel index is starting from 0.
+    set_pixel_color(i, color, 0);
     #if MULTIPLE_NEOPIXEL_TYPES
-      if( i < pixels(NEOPIXEL2)) set_pixel_color(i, color, NEOPIXEL2);
+      if( i < neo.pixels(1)) set_pixel_color(i, color, 1);
     #endif
   }
   show();
@@ -91,19 +91,19 @@ void Marlin_NeoPixel::set_color_startup(const uint32_t color) {
 
 #if ENABLED(NEOPIXEL_TEST_PIXEL)
 void Marlin_NeoPixel::set_pixel_color_startup(const uint32_t color) {
-  for ( uint16_t i= 0; i < pixels(NEOPIXEL1); i++){  // i: set_pixel_color --> n  Pixel index is starting from 0.
-    set_pixel_color(i, color, NEOPIXEL1); 
+  for ( uint16_t i= 0; i < pixels(); i++){  // i: set_pixel_color --> n  Pixel index is starting from 0.
+    set_pixel_color(i, color); 
     #if MULTIPLE_NEOPIXEL_TYPES
-      if( i < pixels(NEOPIXEL2)) set_pixel_color(i, color, NEOPIXEL2);
+      if( i < pixels(1)) set_pixel_color(i, color, 1);
     #endif
     show();
     safe_delay(NEOPIXEL_TEST_PIXEL_DELAY);
   }
   #if ENABLED(NEOPIXEL_TEST_PIXEL_ROTATE_BACK)
-    for ( uint16_t i= pixels(NEOPIXEL1); i>0; i--){  // i: set_pixel_color --> n  Pixel index is starting from 0.
-      set_pixel_color(i-1, adaneo1.Color(0, 0, 0, 0),NEOPIXEL1); 
+    for ( uint16_t i= pixels(); i>0; i--){  // i: set_pixel_color --> n  Pixel index is starting from 0.
+      set_pixel_color(i-1, adaneo1.Color(0, 0, 0, 0)); 
       #if MULTIPLE_NEOPIXEL_TYPES
-        if( i < pixels(NEOPIXEL2)) set_pixel_color(i-1, adaneo2.Color(0, 0, 0, 0), NEOPIXEL2); ;
+        if( i < pixels(1)) set_pixel_color(i-1, adaneo2.Color(0, 0, 0, 0), 1); ;
       #endif
       show();
       safe_delay(NEOPIXEL_TEST_PIXEL_DELAY);
