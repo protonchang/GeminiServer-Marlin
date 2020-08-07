@@ -422,7 +422,11 @@
  * Specify whether the power supply is active HIGH or active LOW.
  */
 //#define PSU_CONTROL
-//#define PSU_NAME "Power Supply"
+#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT,ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #define PSU_NAME "S-300-12"
+#else
+  #define PSU_NAME "Power Supply"
+#endif
 
 #if ENABLED(PSU_CONTROL)
   #define PSU_ACTIVE_HIGH false     // Set 'false' for ATX, 'true' for X-Box
@@ -640,18 +644,18 @@
    *                         M303 E0 S240 C8  ; Start PID autotune
    * Attention - Start Temperatur: Ideal is start from room temperature!
    *
-   * Measurement:  | #1    |#2      | #3     | #4     | #Aprox.
-   * Start °C:     | 24°C  | 38.8°C | 30.2°C | 00.0°C | ~
-   * Target °C:    | S235  | S235   | S220   | S250   | ~
-   * Hotend_Kp:    | 19.30 | 18.12  | 18.33  | 18.26  | ~
-   * Hotend_Ki:    | 01.38 | 1.26   | 1.28   | 1.24   | ~
-   * Hotend_Kd:    | 67.59 | 65.31  | 65.68  | 67.32  | ~
+   * Measurement:  | #1      |#2      | #Aprox.
+   * Start °C:     | 34.9°C  | 26.0°C | ~
+   * Target °C:    | S240    | S240   | ~ 240°C
+   * Hotend_Kp:    | 18.98   | 19.94  | ~ 19,46
+   * Hotend_Ki:    | 01.24   | 01.32  | ~ 1.28
+   * Hotend_Kd:    | 72.61   | 75.55  | ~ 74.08
    *
    * Save/change with: M301 E0 P14.38 I0.81 D63.80;
    */
-  #define DEFAULT_Kp 18.50
-  #define DEFAULT_Ki 1.29
-  #define DEFAULT_Kd 66.47
+  #define DEFAULT_Kp 19.46
+  #define DEFAULT_Ki 1.28
+  #define DEFAULT_Kd 74.08
 
 #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
   // Default 4MAX pre-configured hotend PIDs
@@ -751,17 +755,17 @@
     * Attention - Start Temperatur: Ideal is start from room temperature!
     *
     * Measurement:  | #1     | #2     | #Aprox. from 3+4
-    * Start °C:     | 30.2°C | 31.2°C | ~
+    * Start °C:     | 26.3°C | 31.2°C | ~
     * Target °C:    | S90    | S90    | ~
-    * bedKp:        | 108.35 | 110.07 | ~ 109.21
-    * bedKi:        | 021.33 | 021.67 | ~ 021.50
-    * bedKd:        | 366.88 | 372.67 | ~ 369.77
+    * bedKp:        | 128.88 | 111.11 | ~ 111.11
+    * bedKi:        | 025.95 | 011.11 | ~ 111.11
+    * bedKd:        | 433.31 | 111.11 | ~ 111.11
     *
     * Save/change with: M304 P109.21 I021.50 D369.77
     */
-    #define DEFAULT_bedKp 109.21
-    #define DEFAULT_bedKi 021.50
-    #define DEFAULT_bedKd 369.77
+    #define DEFAULT_bedKp 128.88
+    #define DEFAULT_bedKi 025.95
+    #define DEFAULT_bedKd 433.31
 
   #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
     // Factory Default for ANYCUBIC 4MAX
@@ -1302,7 +1306,7 @@
 #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
   // my 4MAX Printer: 7of9 - Offset
   //#define NOZZLE_TO_PROBE_OFFSET { 32.77, 0, -0.96 }
-  #define NOZZLE_TO_PROBE_OFFSET { 33, 0, -2.94 }
+  #define NOZZLE_TO_PROBE_OFFSET { 31.8, 0, -1.45 }
 #endif
 
 // Most probes should stay away from the edges of the bed, but
@@ -1310,7 +1314,7 @@
 #define PROBING_MARGIN 10
 
 // X and Y axis travel speed (mm/m) between probes
-#define XY_PROBE_SPEED 8000
+#define XY_PROBE_SPEED 6000
 
 // Feedrate (mm/m) for the first approach when double-probing (MULTIPLE_PROBING == 2)
 #define Z_PROBE_SPEED_FAST HOMING_FEEDRATE_Z
@@ -1348,7 +1352,7 @@
 #define Z_CLEARANCE_BETWEEN_PROBES 10 // Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     5 // Z Clearance between multiple probes
 #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
-  #define Z_AFTER_PROBING             5 // Z position after probing is done
+  #define Z_AFTER_PROBING          10 // Z position after probing is done
 #else
   //#define Z_AFTER_PROBING             5 // Z position after probing is done
 #endif
@@ -1428,7 +1432,7 @@
 // @section extruder
 
 // For direct drive extruder v9 set to true, for geared extruder set to false.
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define INVERT_E0_DIR true
 #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
   #define INVERT_E0_DIR false

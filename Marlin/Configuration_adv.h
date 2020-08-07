@@ -475,6 +475,14 @@
 #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
   #define E0_AUTO_FAN_PIN 44
 #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #ifdef FAN_PIN
+    #undef FAN_PIN
+  #endif
+  #ifdef FAN1_PIN
+    #undef FAN1_PIN
+  #endif
+  #define FAN_PIN   P2_04   // FAN1_PIN is our Hotend FAN!
+  #define FAN1_PIN  P2_03  // FAN_PIN is our Extruder FAN E0!
   #define E0_AUTO_FAN_PIN FAN1_PIN
 #else
   #define E0_AUTO_FAN_PIN -1
@@ -1607,7 +1615,11 @@
  *
  * Warning: Does not respect endstops!
  */
-//#define BABYSTEPPING
+#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #define BABYSTEPPING
+#else 
+  //#define BABYSTEPPING
+#endif
 #if ENABLED(BABYSTEPPING)
   //#define INTEGRATED_BABYSTEPPING         // EXPERIMENTAL integration of babystepping into the Stepper ISR
   //#define BABYSTEP_WITHOUT_HOMING
