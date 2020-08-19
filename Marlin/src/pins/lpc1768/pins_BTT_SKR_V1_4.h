@@ -89,6 +89,7 @@
   #else
     #define Z_STOP_PIN     Z_DIAG_PIN
   #endif
+  #define USE_ZMAX_PLUG
   #if ENABLED(USE_ZMAX_PLUG)
     #define Z_MAX_PIN      P1_27   // PWRDET
   #else

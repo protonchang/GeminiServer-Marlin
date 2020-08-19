@@ -177,7 +177,7 @@
 
 #ifndef SHORT_BUILD_VERSION
     #define BUILD_SUFFIX  "Rel."        // Release Tag
-    #define BUILD_VERSION "2.0.6001"    // Version Info - Major.Minor.Build Build - WXYZ
+    #define BUILD_VERSION "2.0.6002"    // Version Info - Major.Minor.Build Build - WXYZ
                                         // W: Recent marlin release Build (Marlin 2.0.x)
                                         // XYZ: Last own build number
     #define SHORT_BUILD_VERSION  BUILD_PREFIX BUILD_VERSION BUILD_SUFFIX
@@ -1487,7 +1487,11 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
+#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+#define Z_MAX_POS 296
+#else
 #define Z_MAX_POS 300
+#endif
 
 
 
@@ -1645,7 +1649,7 @@
 #if EITHER(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 10
+  #define GRID_MAX_POINTS_X 16
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   // Probe along the Y axis, advancing X after each column
@@ -1768,8 +1772,13 @@
 #define Z_SAFE_HOMING
 
 #if ENABLED(Z_SAFE_HOMING)
-  #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
-  #define Z_SAFE_HOMING_Y_POINT Y_CENTER  // Y point for Z homing
+  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+    #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
+    #define Z_SAFE_HOMING_Y_POINT Y_CENTER  // Y point for Z homing
+  #else
+    #define Z_SAFE_HOMING_X_POINT X_MIN_BED  // X point for Z homing
+    #define Z_SAFE_HOMING_Y_POINT Y_MIN_BED  // Y point for Z homing
+  #endif
 #endif
 
 // Homing speeds (mm/m)
