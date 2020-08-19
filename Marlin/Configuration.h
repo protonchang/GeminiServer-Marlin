@@ -176,8 +176,8 @@
 #endif
 
 #ifndef SHORT_BUILD_VERSION
-    #define BUILD_SUFFIX  "Rel."        // Release Tag
-    #define BUILD_VERSION "2.0.6002"    // Version Info - Major.Minor.Build Build - WXYZ
+    #define BUILD_SUFFIX  "BTA."        // Release Tag
+    #define BUILD_VERSION "2.1.0001"    // Version Info - Major.Minor.Build Build - WXYZ
                                         // W: Recent marlin release Build (Marlin 2.0.x)
                                         // XYZ: Last own build number
     #define SHORT_BUILD_VERSION  BUILD_PREFIX BUILD_VERSION BUILD_SUFFIX
