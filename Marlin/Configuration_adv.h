@@ -373,17 +373,17 @@
  */
 #define USE_CONTROLLER_FAN
 #if ENABLED(USE_CONTROLLER_FAN)
-  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
     #ifndef CONTROLLER_FAN_PIN
       #define CONTROLLER_FAN_PIN          7    // Set a custom pin for the controller fan
     #endif 
-  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #ifdef CONTROLLER_FAN_PIN
      #undef CONTROLLER_FAN_PIN
     #endif
     #define CONTROLLER_FAN_PIN       P1_00 // PWRDET - PS_ON_PIN
   #endif
-  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define CONTROLLERFAN_SPEED_MIN      20 // (0-255) Minimum speed. (If set below this value the fan is turned off.)
     #define CONTROLLERFAN_IDLE_TIME      60 // (seconds) Extra time to keep the fan running after disabling motors
     #define CONTROLLERFAN_SPEED_ACTIVE  255 // (0-255) Active speed, used when any motor is enabled
@@ -474,7 +474,7 @@
  */
 #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
   #define E0_AUTO_FAN_PIN 44
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #ifdef FAN_PIN
     #undef FAN_PIN
   #endif
@@ -516,7 +516,7 @@
 /**
  * M355 Case Light on-off / brightness
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
  #define CASE_LIGHT_ENABLE
 #else // ANYCUBIC_4MAX_DEFAULT
 //#define CASE_LIGHT_ENABLE
@@ -701,9 +701,9 @@
 
   // Safety: The probe needs time to recognize the command.
   //         Minimum command delay (ms). Enable and increase if needed.
-  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
     #define BLTOUCH_DELAY 375
-  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define BLTOUCH_DELAY 375
   #else // ANYCUBIC_4MAX_DEFAULT
     //#define BLTOUCH_DELAY 500
@@ -1111,7 +1111,7 @@
    * LED Control Menu
    * Add LED Control to the LCD menu
    */
-  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define LED_CONTROL_MENU
   #else
     //#define LED_CONTROL_MENU
@@ -1206,7 +1206,7 @@
    */
    #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
     //#define POWER_LOSS_RECOVERY
-   #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+   #elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define POWER_LOSS_RECOVERY
     #ifndef POWER_LOSS_PIN
       #define POWER_LOSS_PIN  -1 // Not using this Pin!
@@ -1622,7 +1622,7 @@
  *
  * Warning: Does not respect endstops!
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define BABYSTEPPING
 #else 
   //#define BABYSTEPPING
@@ -1729,10 +1729,17 @@
 * |__________________________|
 * Set the boundaries for probing (where the probe can reach).
 */
-  #define PROBING_MARGIN_LEFT PROBING_MARGIN
-  #define PROBING_MARGIN_RIGHT PROBING_MARGIN
-  #define PROBING_MARGIN_FRONT PROBING_MARGIN
-  #define PROBING_MARGIN_BACK PROBING_MARGIN
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
+    #define PROBING_MARGIN_LEFT 10   // PROBING_MARGIN
+    #define PROBING_MARGIN_RIGHT 5 // PROBING_MARGIN
+    #define PROBING_MARGIN_FRONT 5 // PROBING_MARGIN
+    #define PROBING_MARGIN_BACK  5 // PROBING_MARGIN
+  #else
+    #define PROBING_MARGIN_LEFT PROBING_MARGIN
+    #define PROBING_MARGIN_RIGHT PROBING_MARGIN
+    #define PROBING_MARGIN_FRONT PROBING_MARGIN
+    #define PROBING_MARGIN_BACK PROBING_MARGIN
+  #endif
 #endif
 
 #if EITHER(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL)
@@ -2313,7 +2320,7 @@
   // Documentation --> 9 Selecting Sense Resistors List - https://www.trinamic.com/fileadmin/assets/Products/ICs_Documents/TMC5161-datasheet_Rev1.02.pdf
   // BTT TMC5161 v1.1 has 0.062 Ω
   //
-  #if ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define RSENSE      0.075f
   #else
     #define RSENSE      0.11f
@@ -2467,7 +2474,7 @@
    * The default SW SPI pins are defined the respective pins files,
    * but you can override or define them here.
    */
-  #if ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define TMC_USE_SW_SPI
   #else
   //#define TMC_USE_SW_SPI
@@ -2551,7 +2558,7 @@
    * M122 - Report driver parameters (Requires TMC_DEBUG)
    */
 
-  #if ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define MONITOR_DRIVER_STATUS
   #else
     //#define MONITOR_DRIVER_STATUS
@@ -2569,7 +2576,7 @@
    * STEALTHCHOP_(XY|Z|E) must be enabled to use HYBRID_THRESHOLD.
    * M913 X/Y/Z/E to live tune the setting
    */
-  #if ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define HYBRID_THRESHOLD
   #else
     //#define HYBRID_THRESHOLD
@@ -2647,7 +2654,7 @@
    * Beta feature!
    * Create a 50/50 square wave step pulse optimal for stepper drivers.
    */
-  #if ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     // enable double edge step pulses -  Enable step impulse at each step edge to reduce step frequency requirement
     // 6.5.2 CHOPCONF – Chopper Configuration --> https://www.trinamic.com/fileadmin/assets/Products/ICs_Documents/TMC5161-datasheet_Rev1.02.pdf
     //#define SQUARE_WAVE_STEPPING
@@ -2659,7 +2666,7 @@
    * Enable M122 debugging command for TMC stepper drivers.
    * M122 S0/1 will enable continous reporting.
    */
-  #if ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define TMC_DEBUG
   #else
     //#define TMC_DEBUG
