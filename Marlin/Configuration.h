@@ -137,13 +137,13 @@
   #if (MOTHERBOARD == BOARD_TRIGORILLA_14)
     #define ANYCUBIC_4MAX
   #elif (MOTHERBOARD == BOARD_BTT_SKR_V1_4_TURBO)
-    // ANYCUBIC_4MAX_SKR_1_4_PRO specific setting can be set here!
+    // ANYCUBIC_4MAX_7OF9_SKR specific setting can be set here!
   #else
     #error "### ERROR: No Supported MOTHERBOARD defined! Please check platformio.ini ###"
   #endif
 #endif
 
-#if EITHER( ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT,ANYCUBIC_4MAX_SKR_1_4_PRO )
+#if ANY( ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR )
   #if (MOTHERBOARD == BOARD_TRIGORILLA_14) && \
       ( ENABLED(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9 ) || \
       ENABLED(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_DEFAULT) || \
@@ -155,12 +155,18 @@
     //#pragma message ( "### BUILDIND Firmware for: \"ANYCUBIC_4MAX_7OF9\"" )
   #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
     //#pragma message ( "### BUILDIND Firmware for: \"ANYCUBIC_4MAX_DEFAULT\"" )
-  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
       #undef SERIAL_PORT
       #undef SERIAL_PORT_2
       #define SERIAL_PORT 0
       #define SERIAL_PORT_2 -1
-      //#pragma message ( "### BUILDIND Firmware for: \"ANYCUBIC_4MAX_SKR_1_4_PRO\"" )
+      //#pragma message ( "### BUILDIND Firmware for: \"ANYCUBIC_4MAX_7OF9_SKR\"" )
+  #elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
+      #undef SERIAL_PORT
+      #undef SERIAL_PORT_2
+      #define SERIAL_PORT 0
+      #define SERIAL_PORT_2 -1
+      //#pragma message ( "### BUILDIND Firmware for: \"ANYCUBIC_4MAX_7OF9_SKR\"" )
   #else
     #error "No default 4MAX settings are set! - ### Define your custom 4MAX setting! ###"
   #endif
@@ -169,15 +175,15 @@
 /**
  * Release version. Leave the Marlin version or apply a custom scheme.
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
   #define BUILD_PREFIX "4MAX "  // x.y.zz | Count zz Up for testing Builds.
-#elif ENABLED( ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY( ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define BUILD_PREFIX "4MAX-SKR "  // x.y.zz | Count zz Up for testing Builds.
 #endif
 
 #ifndef SHORT_BUILD_VERSION
     #define BUILD_SUFFIX  "Rel."        // Release Tag
-    #define BUILD_VERSION "2.0.6002"    // Version Info - Major.Minor.Build Build - WXYZ
+    #define BUILD_VERSION "2.0.6004"    // Version Info - Major.Minor.Build Build - WXYZ
                                         // W: Recent marlin release Build (Marlin 2.0.x)
                                         // XYZ: Last own build number
     #define SHORT_BUILD_VERSION  BUILD_PREFIX BUILD_VERSION BUILD_SUFFIX
@@ -197,9 +203,12 @@
   #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
     #define MACHINE_NAME        "Anycubic 4MAX"
     #define CUSTOM_MACHINE_NAME "Anycubic 4MAX"
-  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
-    #define MACHINE_NAME        "4MAX - p1c4rd"
-    #define CUSTOM_MACHINE_NAME "4MAX - p1c4rd"
+  #elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
+    #define MACHINE_NAME        "4MAX-SKR 7of9"
+    #define CUSTOM_MACHINE_NAME "4MAX-SKR 7of9"
+  #elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
+    #define MACHINE_NAME        "4MAX-SKR vg3r"
+    #define CUSTOM_MACHINE_NAME "4MAX-SKR vg3r"
   #endif
 #endif
 
@@ -227,8 +236,10 @@
    #define DEFAULT_MACHINE_UUID "6aa1441c-ffd5-11e9-8d71-362b9e155667"
  #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
    #define DEFAULT_MACHINE_UUID "6aa147d2-ffd5-11e9-8d71-362b9e155667"
- #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+ #elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
    #define DEFAULT_MACHINE_UUID "6aa132bb-ffd5-11e9-8d71-362b9e155667"
+ #elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
+   #define DEFAULT_MACHINE_UUID "6aa1467f-ffd5-11e9-8d71-362b9e155667"
  #else 
    //#define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
  #endif
@@ -422,7 +433,7 @@
  * Specify whether the power supply is active HIGH or active LOW.
  */
 //#define PSU_CONTROL
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define PSU_NAME "S-300-12"
 #else
   #define PSU_NAME "Power Supply"
@@ -637,7 +648,7 @@
   #define DEFAULT_Ki 01.350
   #define DEFAULT_Kd 75.915
 
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
   /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
    * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
    *                         M106 E0 S255     ; set Fan to 100%
@@ -657,6 +668,26 @@
   #define DEFAULT_Ki 1.28
   #define DEFAULT_Kd 74.08
 
+#elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
+  /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
+   * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
+   *                         M106 E0 S255     ; set Fan to 100%
+   *                         M303 E0 S240 C8  ; Start PID autotune
+   * Attention - Start Temperatur: Ideal is start from room temperature!
+   *
+   * Measurement:  | #1      |#2      | #Aprox.
+   * Start °C:     | 34.9°C  | 26.0°C | ~
+   * Target °C:    | S240    | S240   | ~ 240°C
+   * Hotend_Kp:    | 18.98   | 19.94  | ~ 19,46
+   * Hotend_Ki:    | 01.24   | 01.32  | ~ 1.28
+   * Hotend_Kd:    | 72.61   | 75.55  | ~ 74.08
+   *
+   * Save/change with: M301 E0 P14.38 I0.81 D63.80;
+   */
+  #define DEFAULT_Kp 19.46
+  #define DEFAULT_Ki 1.28
+  #define DEFAULT_Kd 74.08
+  
 #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
   // Default 4MAX pre-configured hotend PIDs
   #define DEFAULT_Kp 22.2
@@ -747,8 +778,27 @@
     #define DEFAULT_bedKp 109.21
     #define DEFAULT_bedKi 021.50
     #define DEFAULT_bedKd 369.77
+  
+  #elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
+    /** 4MAX with PID Autotune - my 4MAX Printer: 7of9 - PID - BED
+    * Autotuned with command: M304 P0 I0 D0    ; ZERO current PID Info
+    *                         M303 E-1 S90 C8  ; Start PID Autotune
+    * Attention - Start Temperatur: Ideal is start from room temperature!
+    *
+    * Measurement:  | #1     | #2     | #Aprox. from 3+4
+    * Start °C:     | 26.3°C | 31.2°C | ~
+    * Target °C:    | S90    | S90    | ~
+    * bedKp:        | 128.88 | 111.11 | ~ 111.11
+    * bedKi:        | 025.95 | 011.11 | ~ 111.11
+    * bedKd:        | 433.31 | 111.11 | ~ 111.11
+    *
+    * Save/change with: M304 P109.21 I021.50 D369.77
+    */
+    #define DEFAULT_bedKp 128.88
+    #define DEFAULT_bedKi 025.95
+    #define DEFAULT_bedKd 433.31
 
-  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
     /** 4MAX with PID Autotune - my 4MAX Printer: 7of9 - PID - BED
     * Autotuned with command: M304 P0 I0 D0    ; ZERO current PID Info
     *                         M303 E-1 S90 C8  ; Start PID Autotune
@@ -853,9 +903,9 @@
 #define USE_ZMIN_PLUG
 //#define USE_XMAX_PLUG
 //#define USE_YMAX_PLUG
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define USE_ZMAX_PLUG
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   // Using ZMAX! Undef some pins which is using the P1_27 for ZMAX!
   #define USE_ZMAX_PLUG
   #ifdef  Z_MAX_PIN
@@ -898,7 +948,7 @@
 #endif
 
 // Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define X_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Y_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Z_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
@@ -915,7 +965,7 @@
   #define Y_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Z_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
   //#define Z_MIN_PROBE_ENDSTOP_INVERTING false // Set to true to invert the logic of the probe.
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define X_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Y_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Z_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
@@ -944,7 +994,7 @@
   #define X_DRIVER_TYPE  TMC2208_STANDALONE
   #define Y_DRIVER_TYPE  TMC2208_STANDALONE
   #define Z_DRIVER_TYPE  TMC2208_STANDALONE
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define X_DRIVER_TYPE  TMC5160
   #define Y_DRIVER_TYPE  TMC5160
   #define Z_DRIVER_TYPE  TMC5160
@@ -961,7 +1011,7 @@
 
 #if ENABLED(ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_VG3R)
   #define E0_DRIVER_TYPE TMC2208
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define E0_DRIVER_TYPE TMC5160
 #else // Default 4MAX Driver
   #define E0_DRIVER_TYPE A4988
@@ -1029,9 +1079,13 @@
 #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
   // Default 4MAX
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 92.60 }
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
   // my 4MAX Printer: 7of9 - Steps - Filament
   #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80.12018, 80.10413, 397.14058, 98.73 }
+#elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
+  // my 4MAX Printer: vg3r - Steps - Filament
+  #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80.12018, 80.10413, 397.14058, 98.73 }
+
 #endif
 
 
@@ -1134,9 +1188,7 @@
  * The probe replaces the Z-MIN endstop and is used for Z homing.
  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
-  #define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
 #else
   //#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN
@@ -1162,9 +1214,6 @@
  *
  */
 //#define Z_MIN_PROBE_PIN 15 // 15: Y_MAX for BLTOUCH
-//#if ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
-  //#define Z_MIN_PROBE_PIN P0_10
-// #endif
 
 /**
  * Probe Type
@@ -1196,9 +1245,9 @@
 /**
  * Z Servo Probe, such as an endstop switch on a rotating arm.
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define Z_PROBE_SERVO_NR 2         // Defaults to SERVO 0 connector.
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   //#define Z_PROBE_SERVO_NR 0  // Defaults to SERVO 0 connector.
 #else
   //#define Z_PROBE_SERVO_NR 0         // Defaults to SERVO 0 connector.
@@ -1208,7 +1257,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
- #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+ #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define BLTOUCH
  #else
   //#define BLTOUCH
@@ -1303,10 +1352,14 @@
   #define NOZZLE_TO_PROBE_OFFSET { 33, 0, -1.25 }
 #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
   #define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
   // my 4MAX Printer: 7of9 - Offset
   //#define NOZZLE_TO_PROBE_OFFSET { 32.77, 0, -0.96 }
-  #define NOZZLE_TO_PROBE_OFFSET { 31.8, 0, -1.45 }
+  #define NOZZLE_TO_PROBE_OFFSET { 31.8, 0, -1.30 }
+#elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
+  // my 4MAX Printer: vg3r - Offset
+  //#define NOZZLE_TO_PROBE_OFFSET { 32.77, 0, -0.96 }
+  #define NOZZLE_TO_PROBE_OFFSET { 32.78, 0, -2.53 }
 #endif
 
 // Most probes should stay away from the edges of the bed, but
@@ -1351,7 +1404,7 @@
 #define Z_CLEARANCE_DEPLOY_PROBE   15 // Z Clearance for Deploy/Stow
 #define Z_CLEARANCE_BETWEEN_PROBES 10 // Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     5 // Z Clearance between multiple probes
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define Z_AFTER_PROBING          10 // Z position after probing is done
 #else
   //#define Z_AFTER_PROBING             5 // Z position after probing is done
@@ -1364,7 +1417,7 @@
 #define Z_PROBE_OFFSET_RANGE_MAX 20
 
 // Enable the M48 repeatability test to test probe accuracy
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define Z_MIN_PROBE_REPEATABILITY_TEST
 #else
   //#define Z_MIN_PROBE_REPEATABILITY_TEST
@@ -1415,11 +1468,11 @@
 // @section machine
 
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define INVERT_X_DIR true
   #define INVERT_Y_DIR true
   #define INVERT_Z_DIR true
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define INVERT_X_DIR false
   #define INVERT_Y_DIR false
   #define INVERT_Z_DIR false
@@ -1432,9 +1485,9 @@
 // @section extruder
 
 // For direct drive extruder v9 set to true, for geared extruder set to false.
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define INVERT_E0_DIR true
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define INVERT_E0_DIR false
 #else
   #define INVERT_E0_DIR false
@@ -1473,8 +1526,11 @@
 #elif ENABLED(ANYCUBIC_4MAX_7OF9)
   #define X_BED_SIZE 212
   #define Y_BED_SIZE 215
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
   #define X_BED_SIZE 212
+  #define Y_BED_SIZE 215
+#elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
+  #define X_BED_SIZE 207
   #define Y_BED_SIZE 215
 #else
   #define X_BED_SIZE 218
@@ -1487,7 +1543,7 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
 #define Z_MAX_POS 296
 #else
 #define Z_MAX_POS 300
@@ -1598,8 +1654,10 @@
  */
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9 /* ,ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR */)
   #define AUTO_BED_LEVELING_BILINEAR
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
+  #define AUTO_BED_LEVELING_UBL
 #else
   //#define AUTO_BED_LEVELING_BILINEAR
 #endif
@@ -1638,9 +1696,9 @@
   #if ENABLED(G26_MESH_VALIDATION)
     #define MESH_TEST_NOZZLE_SIZE    0.4  // (mm) Diameter of primary nozzle.
     #define MESH_TEST_LAYER_HEIGHT   0.2  // (mm) Default layer height for the G26 Mesh Validation Tool.
-    #define MESH_TEST_HOTEND_TEMP  245    // (°C) Default nozzle temperature for the G26 Mesh Validation Tool.
-    #define MESH_TEST_BED_TEMP      85    // (°C) Default bed temperature for the G26 Mesh Validation Tool.
-    #define G26_XY_FEEDRATE         20    // (mm/s) Feedrate for XY Moves for the G26 Mesh Validation Tool.
+    #define MESH_TEST_HOTEND_TEMP    235  // (°C) Default nozzle temperature for the G26 Mesh Validation Tool.
+    #define MESH_TEST_BED_TEMP        90  // (°C) Default bed temperature for the G26 Mesh Validation Tool.
+    #define G26_XY_FEEDRATE           20  // (mm/s) Feedrate for XY Moves for the G26 Mesh Validation Tool.
     #define G26_RETRACT_MULTIPLIER   1.0  // G26 Q (retraction) used by default between mesh test elements.
   #endif
 
@@ -1659,7 +1717,7 @@
 
     // Beyond the probed grid, continue the implied tilt?
     // Default is to maintain the height of the nearest edge.
-    #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+    #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
       #define EXTRAPOLATE_BEYOND_GRID
     #else
       //#define EXTRAPOLATE_BEYOND_GRID
@@ -1669,14 +1727,14 @@
     // Experimental Subdivision of the grid by Catmull-Rom method.
     // Synthesizes intermediate points to produce a more detailed mesh.
     //
-    #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+    #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
       //#define ABL_BILINEAR_SUBDIVISION
     #else
       //#define ABL_BILINEAR_SUBDIVISION
     #endif
     #if ENABLED(ABL_BILINEAR_SUBDIVISION)
       // Number of subdivisions between probe points
-      #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+      #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
         #define BILINEAR_SUBDIVISIONS 1
       #else
         //#define BILINEAR_SUBDIVISIONS 3
@@ -1721,7 +1779,7 @@
  * Add a bed leveling sub-menu for ABL or MBL.
  * Include a guided procedure if manual probing is enabled.
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define LCD_BED_LEVELING
 #else
   //#define LCD_BED_LEVELING
@@ -1772,7 +1830,7 @@
 #define Z_SAFE_HOMING
 
 #if ENABLED(Z_SAFE_HOMING)
-  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
     #define Z_SAFE_HOMING_Y_POINT Y_CENTER  // Y point for Z homing
   #else
@@ -2023,7 +2081,7 @@
  *
  * View the current statistics with M78.
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
 #define PRINTCOUNTER
 #else
 //#define PRINTCOUNTER
@@ -2674,7 +2732,7 @@
 #endif
 
 // Support for Adafruit Neopixel LED driver
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_SKR_1_4_PRO)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9,ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define NEOPIXEL_LED
 #else
   //#define NEOPIXEL_LED
@@ -2683,10 +2741,10 @@
   #define NEOPIXEL_TYPE   NEO_GRB                     // First neopixel type - NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)
   //#define NEOPIXEL2_TYPE  NEO_GRB                     // Optional - Second neopixel type - NEO_GRBW / NEO_GRB - four/three channel driver type (defined in Adafruit_NeoPixel.h)
 
-  #if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
     #define NEOPIXEL_PIN    SERVO3_PIN                // LED driving pin
     //#define NEOPIXEL2_PIN     -1                    // Second neopixel not using
-  #elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+  #elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     //#define NEOPIXEL_PIN         P1_24                // Is define in pins!
     //#define NEOPIXEL2_PIN        P1_25                // Second neopixel not using
   #else
@@ -2744,16 +2802,16 @@
  * Set this manually if there are extra servos needing manual control.
  * Leave undefined or set to 0 to entirely disable the servo subsystem.
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
   #define NUM_SERVOS 4 // Servo index starts with 0 for M280 command
-#elif ENABLED(ANYCUBIC_4MAX_SKR_1_4_PRO)
+#elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define NUM_SERVOS 1
 #endif
 
 // (ms) Delay  before the next move will start, to give the servo time to reach its target angle.
 // 300ms is a good value but you can try less delay.
 // If the servo can't reach the requested position, increase it.
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
   #define SERVO_DELAY { 300,300,300,300 }
 #else
   #define SERVO_DELAY {300}
