@@ -472,7 +472,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-#if EITHER(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
+#if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
   #define E0_AUTO_FAN_PIN 44
 #elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #ifdef FAN_PIN
@@ -2310,9 +2310,9 @@
   // | 0.062       | 3.8                    | 5.4                                | <-- BTT TMC5161 v1.1
   // | 0.060       | 3.8                    | 5.4                                |
   // | --------------------------------------------------------------------------|
-  // Documentation --> 9 Selecting Sense Resistors List - https://www.trinamic.com/fileadmin/assets/Products/ICs_Documents/TMC5161-datasheet_Rev1.02.pdf
-  // BTT TMC5161 v1.1 has 0.062 Ω
-  //
+  // Documentation 9 Selecting Sense Resistors List 
+  // BTT TMC5161 v1.1 has 0.062Ω  --> https://www.trinamic.com/fileadmin/assets/Products/ICs_Documents/TMC5161-datasheet_Rev1.02.pdf
+  // BTT TMC5160 has 0.075Ω       --> https://www.trinamic.com/fileadmin/assets/Products/ICs_Documents/TMC5160A_Datasheet_Rev1.14.pdf
   #if ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
     #define RSENSE      0.075f
   #else

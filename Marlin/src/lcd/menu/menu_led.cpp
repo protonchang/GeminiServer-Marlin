@@ -43,7 +43,7 @@ void menu_led_custom() {
   EDIT_ITEM_FAST(percent, MSG_INTENSITY_R, &leds.color.r, 0, 255, leds.update, true);
   EDIT_ITEM_FAST(percent, MSG_INTENSITY_G, &leds.color.g, 0, 255, leds.update, true);
   EDIT_ITEM_FAST(percent, MSG_INTENSITY_B, &leds.color.b, 0, 255, leds.update, true);
-  #if EITHER(RGBW_LED)
+  #if ENABLED(RGBW_LED)
     EDIT_ITEM_FAST(percent, MSG_INTENSITY_W, &leds.color.w, 0, 255, leds.update, true);
   #endif
   END_MENU();
