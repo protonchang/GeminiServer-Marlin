@@ -38,32 +38,24 @@ Marlin_NeoPixel neo;
 int8_t Marlin_NeoPixel::neoindex;
 
 Adafruit_NeoPixel Marlin_NeoPixel::adaneo1(NEOPIXEL_PIXELS, NEOPIXEL_PIN, NEOPIXEL_TYPE + NEO_KHZ800)
-  #if MULTIPLE_NEOPIXEL_TYPES
-    , Marlin_NeoPixel::adaneo2(NEOPIXEL2_PIXELS, NEOPIXEL2_PIN, NEOPIXEL2_TYPE + NEO_KHZ800)
+  #if EITHER(MULTIPLE_NEOPIXEL_TYPES, NEOPIXEL2_INSERIES)
+    , Marlin_NeoPixel::adaneo2(NEOPIXEL_PIXELS, NEOPIXEL2_PIN, NEOPIXEL2_TYPE + NEO_KHZ800)
   #endif
 ;
 
 #ifdef NEOPIXEL_BKGD_LED_INDEX
+
   void Marlin_NeoPixel::set_color_background() {
     uint8_t background_color[4] = NEOPIXEL_BKGD_COLOR;
-    set_pixel_color(
-      NEOPIXEL_BKGD_LED_INDEX, 
-      adaneo1.Color(background_color[0], background_color[1], background_color[2], background_color[3]),
-      NEOPIXEL1 );
-    #if MULTIPLE_NEOPIXEL_TYPES
-      set_pixel_color( 
-        NEOPIXEL_BKGD_LED_INDEX, 
-        adaneo2.Color(background_color[0], background_color[1], background_color[2], background_color[3]),
-        NEOPIXEL2);
-    #endif
+    set_pixel_color(NEOPIXEL_BKGD_LED_INDEX, adaneo1.Color(background_color[0], background_color[1], background_color[2], background_color[3]));
   }
 
 #endif
 
 void Marlin_NeoPixel::set_color(const uint32_t color) {
-  if (get_neo_index() >= 0) {
-    set_pixel_color(get_neo_index(), color);
-    set_neo_index(-1);
+  if (neoindex >= 0) {
+    set_pixel_color(neoindex, color);
+    neoindex = -1;
   }
   else {
     for (uint16_t i = 0; i < pixels(); ++i) {
@@ -80,12 +72,8 @@ void Marlin_NeoPixel::set_color(const uint32_t color) {
 }
 
 void Marlin_NeoPixel::set_color_startup(const uint32_t color) {
-  for (uint16_t i = 0; i < neo.pixels(0); i++){  // i: set_pixel_color --> n Pixel index is starting from 0.
-    set_pixel_color(i, color, 0);
-    #if MULTIPLE_NEOPIXEL_TYPES
-      if( i < neo.pixels(1)) set_pixel_color(i, color, 1);
-    #endif
-  }
+  for (uint16_t i = 0; i < pixels(); ++i)
+    set_pixel_color(i, color);
   show();
 }
 
@@ -130,25 +118,20 @@ void Marlin_NeoPixel::test_neopixel() {
 }
 #endif // ENABLED(NEOPIXEL_TEST_PIXEL)
 
+
 void Marlin_NeoPixel::init() {
-  set_neo_index(-1);                   // -1 .. NEOPIXEL_PIXELS-1 range
+  neoindex = -1;                       // -1 .. NEOPIXEL_PIXELS-1 range
   set_brightness(NEOPIXEL_BRIGHTNESS); //  0 .. 255 range
   begin();
   show();  // initialize to all off
 
   #if ENABLED(NEOPIXEL_STARTUP_TEST)
     set_color_startup(adaneo1.Color(255, 0, 0, 0));  // red
-    safe_delay(1000);
-    fill_color(adaneo1.Color(0, 255, 0, 0),0,pixels());  // green
-    safe_delay(1000);
-    fill_color(adaneo1.Color(0, 0, 255, 0),0,pixels());  // blue
-    safe_delay(1000);
+    safe_delay(500);
+    set_color_startup(adaneo1.Color(0, 255, 0, 0));  // green
+    safe_delay(500);
+    set_color_startup(adaneo1.Color(0, 0, 255, 0));  // blue
   #endif
-  
-  #if ENABLED(NEOPIXEL_STARTUP_TEST_PIXEL)
-    test_neopixel();
-  #endif
-
 
   #ifdef NEOPIXEL_BKGD_LED_INDEX
     set_color_background();
