@@ -1346,7 +1346,11 @@
   #endif
 
   // Add an optimized binary file transfer mode, initiated with 'M28 B1'
-  //#define BINARY_FILE_TRANSFER
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
+    #define BINARY_FILE_TRANSFER
+  #else
+    //#define BINARY_FILE_TRANSFER
+  #endif
 
   /**
    * Set this option to one of the following (or the board's defaults apply):
@@ -3249,7 +3253,7 @@
 //#define M114_REALTIME       // Real current position based on forward kinematics
 //#define M114_LEGACY         // M114 used to synchronize on every call. Enable if needed.
 
-//#define REPORT_FAN_CHANGE   // Report the new fan speed when changed by M106 (and others)
+#define REPORT_FAN_CHANGE   // Report the new fan speed when changed by M106 (and others)
 
 /**
  * Set the number of proportional font spaces required to fill up a typical character space.
