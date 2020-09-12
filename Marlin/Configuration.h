@@ -656,17 +656,18 @@
    * Attention - Start Temperatur: Ideal is start from room temperature!
    *
    * Measurement:  | #1      |#2      | #Aprox.
-   * Start °C:     | 34.9°C  | 26.0°C | ~
+   * Start °C:     | 21.0°C  | 26.0°C | ~
    * Target °C:    | S240    | S240   | ~ 240°C
-   * Hotend_Kp:    | 18.98   | 19.94  | ~ 19,46
-   * Hotend_Ki:    | 01.24   | 01.32  | ~ 1.28
-   * Hotend_Kd:    | 72.61   | 75.55  | ~ 74.08
+   * Hotend_Kp:    | 20.98   | 19.94  | ~ 20,46
+   * Hotend_Ki:    | 01.43   | 01.32  | ~ 1.375
+   * Hotend_Kd:    | 77.02   | 75.55  | ~ 76.285
    *
    * Save/change with: M301 E0 P14.38 I0.81 D63.80;
+   *             Save: M500
    */
-  #define DEFAULT_Kp 19.46
-  #define DEFAULT_Ki 1.28
-  #define DEFAULT_Kd 74.08
+  #define DEFAULT_Kp 20.46
+  #define DEFAULT_Ki 1.375
+  #define DEFAULT_Kd 76.285
 
 #elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
   /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
@@ -676,17 +677,18 @@
    * Attention - Start Temperatur: Ideal is start from room temperature!
    *
    * Measurement:  | #1      |#2      | #Aprox.
-   * Start °C:     | 34.9°C  | 26.0°C | ~
+   * Start °C:     | 21.0°C  | 39.0°C | ~
    * Target °C:    | S240    | S240   | ~ 240°C
-   * Hotend_Kp:    | 18.98   | 19.94  | ~ 19,46
-   * Hotend_Ki:    | 01.24   | 01.32  | ~ 1.28
-   * Hotend_Kd:    | 72.61   | 75.55  | ~ 74.08
+   * Hotend_Kp:    | 15.96   | 15.77  | ~ 15,865
+   * Hotend_Ki:    | 01.00   | 00.97  | ~ 0.985
+   * Hotend_Kd:    | 63.81   | 64.17  | ~ 63.99
    *
    * Save/change with: M301 E0 P14.38 I0.81 D63.80;
+   *             Save: M500
    */
-  #define DEFAULT_Kp 19.46
-  #define DEFAULT_Ki 1.28
-  #define DEFAULT_Kd 74.08
+  #define DEFAULT_Kp 15.865
+  #define DEFAULT_Ki 0.985
+  #define DEFAULT_Kd 63.99
   
 #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
   // Default 4MAX pre-configured hotend PIDs
@@ -788,15 +790,16 @@
     * Measurement:  | #1     | #2     | #Aprox. from 3+4
     * Start °C:     | 26.3°C | 31.2°C | ~
     * Target °C:    | S90    | S90    | ~
-    * bedKp:        | 128.88 | 111.11 | ~ 111.11
-    * bedKi:        | 025.95 | 011.11 | ~ 111.11
-    * bedKd:        | 433.31 | 111.11 | ~ 111.11
+    * bedKp:        | 128.88 | 109.29 | ~ 111.11
+    * bedKi:        | 025.95 | 021.58 | ~ 111.11
+    * bedKd:        | 433.31 | 369.05 | ~ 111.11
     *
     * Save/change with: M304 P109.21 I021.50 D369.77
+    *             Save: M500
     */
-    #define DEFAULT_bedKp 128.88
-    #define DEFAULT_bedKi 025.95
-    #define DEFAULT_bedKd 433.31
+    #define DEFAULT_bedKp 109.29
+    #define DEFAULT_bedKi 021.58
+    #define DEFAULT_bedKd 369.05
 
   #elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
     /** 4MAX with PID Autotune - my 4MAX Printer: 7of9 - PID - BED
@@ -807,15 +810,16 @@
     * Measurement:  | #1     | #2     | #Aprox. from 3+4
     * Start °C:     | 26.3°C | 31.2°C | ~
     * Target °C:    | S90    | S90    | ~
-    * bedKp:        | 128.88 | 111.11 | ~ 111.11
-    * bedKi:        | 025.95 | 011.11 | ~ 111.11
-    * bedKd:        | 433.31 | 111.11 | ~ 111.11
+    * bedKp:        | 116.83 | 111.11 | ~ 111.11
+    * bedKi:        | 023.35 | 011.11 | ~ 111.11
+    * bedKd:        | 389.79 | 111.11 | ~ 111.11
     *
     * Save/change with: M304 P109.21 I021.50 D369.77
+    *             Save: M500
     */
-    #define DEFAULT_bedKp 128.88
-    #define DEFAULT_bedKi 025.95
-    #define DEFAULT_bedKd 433.31
+    #define DEFAULT_bedKp 116.83
+    #define DEFAULT_bedKi 023.35
+    #define DEFAULT_bedKd 389.79
 
   #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
     // Factory Default for ANYCUBIC 4MAX
