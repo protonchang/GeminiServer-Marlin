@@ -34,9 +34,8 @@
  * - Extra features
  *
  * Advanced settings can be found in Configuration_adv.h
- *
  */
-#define CONFIGURATION_H_VERSION 020006
+#define CONFIGURATION_H_VERSION 020007
 
 //===========================================================================
 //============================= Getting Started =============================
@@ -182,8 +181,8 @@
 #endif
 
 #ifndef SHORT_BUILD_VERSION
-    #define BUILD_SUFFIX  "Rel."        // Release Tag
-    #define BUILD_VERSION "2.0.6100"    // Version Info - Major.Minor.Build Build - WXYZ
+    #define BUILD_SUFFIX  "BETA"        // Release Tag (Rel. | Beta)
+    #define BUILD_VERSION "2.0.7201"    // Version Info - Major.Minor.Build Build - WXYZ
                                         // W: Recent marlin release Build (Marlin 2.0.x)
                                         // XYZ: Last own build number
     #define SHORT_BUILD_VERSION  BUILD_PREFIX BUILD_VERSION BUILD_SUFFIX
@@ -457,11 +456,10 @@
   #endif
 #endif
 
-// @section temperature
-
 //===========================================================================
 //============================= Thermal Settings ============================
 //===========================================================================
+// @section temperature
 
 /**
  * --NORMAL IS 4.7kohm PULLUP!-- 1kohm pullup can be used on hotend sensor, using correct resistor and table
@@ -500,6 +498,7 @@
  *    21 : Pt100 with circuit in the Ultimainboard V2.x with 3.3v excitation (STM32 \ LPC176x....)
  *    22 : 100k (hotend) with 4.7k pullup to 3.3V and 220R to analog input (as in GTM32 Pro vB)
  *    23 : 100k (bed) with 4.7k pullup to 3.3v and 220R to analog input (as in GTM32 Pro vB)
+ *    30 : Kis3d Silicone heating mat 200W/300W with 6mm precision cast plate (EN AW 5083) NTC100K / B3950 (4.7k pullup)
  *   201 : Pt100 with circuit in Overlord, similar to Ultimainboard V2.x
  *    60 : 100k Maker's Tool Works Kapton Bed Thermistor beta=3950
  *    61 : 100k Formbot / Vivedino 3950 350C thermistor 4.7k pullup
@@ -541,6 +540,12 @@
 // Dummy thermistor constant temperature readings, for use with 998 and 999
 #define DUMMY_THERMISTOR_998_VALUE 25
 #define DUMMY_THERMISTOR_999_VALUE 100
+
+// Resistor values when using a MAX31865 (sensor -5)
+// Sensor value is typically 100 (PT100) or 1000 (PT1000)
+// Calibration value is typically 430 ohm for AdaFruit PT100 modules and 4300 ohm for AdaFruit PT1000 modules.
+//#define MAX31865_SENSOR_OHMS      100
+//#define MAX31865_CALIBRATION_OHMS 430
 
 // Use temp sensor 1 as a redundant sensor with sensor 0. If the readings
 // from the two sensors differ too much the print will be aborted.
@@ -600,104 +605,111 @@
   //#define PID_PARAMS_PER_HOTEND // Uses separate PID parameters for each extruder (useful for mismatched extruders)
                                   // Set/get with gcode: M301 E[extruder number, 0-2]
 
-  // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
+  #if ENABLED(PID_PARAMS_PER_HOTEND)
+    // Specify between 1 and HOTENDS values per array.
+    // If fewer than EXTRUDER values are provided, the last element will be repeated.
+    //#define DEFAULT_Kp_LIST {  22.20,  22.20 }
+    //#define DEFAULT_Ki_LIST {   1.08,   1.08 }
+    //#define DEFAULT_Kd_LIST { 114.00, 114.00 }
+  #else 
+    // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
 
-  // Auto tuned  PIDs with command:
-  //
-  //   M301 E0 P0 I0 D0 ; set current PIDs to ZERO!
-  //   M106 E0 S255     ; set Fan to 100%
-  //   M303 E0 S240 C8  ; Start auto PID tune
+    // Auto tuned  PIDs with command:
+    //
+    //   M301 E0 P0 I0 D0 ; set current PIDs to ZERO!
+    //   M106 E0 S255     ; set Fan to 100%
+    //   M303 E0 S240 C8  ; Start auto PID tune
 
-#if ENABLED(ANYCUBIC_4MAX_VG3R)
-  /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
-   * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
-   *                         M106 E0 S255     ; set Fan to 100%
-   *                         M303 E0 S240 C8  ; Start PID autotune
-   * Attention - Start Temperatur: Ideal is start from room temperature!
-   *
-   * Measurement:  | #1    | #2     |
-   * Start °C:     | 36°C  | 39.6°C | ~
-   * Target °C:    | S240  | S240   | ~
-   * Hotend_Kp:    | 16.99 | 16.96  | ~ 16.975
-   * Hotend_Ki:    | 01.18 | 01.14  | ~ 01.160
-   * Hotend_Kd:    | 61.22 | 62.87  | ~ 62.045
-   *
-   * Save/change with: M301 E0 P16.975 I01.160 D62.045;
-   */
-  #define DEFAULT_Kp 16.975
-  #define DEFAULT_Ki 01.160
-  #define DEFAULT_Kd 62.045
+    #if ENABLED(ANYCUBIC_4MAX_VG3R)
+      /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
+       * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
+       *                         M106 E0 S255     ; set Fan to 100%
+       *                         M303 E0 S240 C8  ; Start PID autotune
+       * Attention - Start Temperatur: Ideal is start from room temperature!
+       *
+       * Measurement:  | #1    | #2     |
+       * Start °C:     | 36°C  | 39.6°C | ~
+       * Target °C:    | S240  | S240   | ~
+       * Hotend_Kp:    | 16.99 | 16.96  | ~ 16.975
+       * Hotend_Ki:    | 01.18 | 01.14  | ~ 01.160
+       * Hotend_Kd:    | 61.22 | 62.87  | ~ 62.045
+       *
+       * Save/change with: M301 E0 P16.975 I01.160 D62.045;
+       */
+      #define DEFAULT_Kp 16.975
+      #define DEFAULT_Ki 01.160
+      #define DEFAULT_Kd 62.045
 
-#elif ENABLED(ANYCUBIC_4MAX_7OF9)
-  /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
-   * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
-   *                         M106 E0 S255     ; set Fan to 100%
-   *                         M303 E0 S240 C8  ; Start PID autotune
-   * Attention - Start Temperatur: Ideal is start from room temperature!
-   *
-   * Measurement:  | #1    |#2      | #Aprox.
-   * Start °C:     | 28°C  | 32.2°C | ~
-   * Target °C:    | S240  | S240   | ~
-   * Hotend_Kp:    | 19.70 | 20.51  | ~ 20.105
-   * Hotend_Ki:    | 01.32 | 01.38  | ~ 01.35
-   * Hotend_Kd:    | 73.41 | 76.42  | ~ 74.915
-   *
-   * Save/change with: M301 E0 P20.105 I01.35 D75.915;
-   */
-  #define DEFAULT_Kp 20.105
-  #define DEFAULT_Ki 01.350
-  #define DEFAULT_Kd 75.915
+    #elif ENABLED(ANYCUBIC_4MAX_7OF9)
+      /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
+       * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
+       *                         M106 E0 S255     ; set Fan to 100%
+       *                         M303 E0 S240 C8  ; Start PID autotune
+       * Attention - Start Temperatur: Ideal is start from room temperature!
+       *
+       * Measurement:  | #1    |#2      | #Aprox.
+       * Start °C:     | 28°C  | 32.2°C | ~
+       * Target °C:    | S240  | S240   | ~
+       * Hotend_Kp:    | 19.70 | 20.51  | ~ 20.105
+       * Hotend_Ki:    | 01.32 | 01.38  | ~ 01.35
+       * Hotend_Kd:    | 73.41 | 76.42  | ~ 74.915
+       *
+       * Save/change with: M301 E0 P20.105 I01.35 D75.915;
+       */
+      #define DEFAULT_Kp 20.105
+      #define DEFAULT_Ki 01.350
+      #define DEFAULT_Kd 75.915
 
-#elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
-  /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
-   * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
-   *                         M106 E0 S255     ; set Fan to 100%
-   *                         M303 E0 S240 C8  ; Start PID autotune
-   * Attention - Start Temperatur: Ideal is start from room temperature!
-   *
-   * Measurement:  | #1      |#2      | #Aprox.
-   * Start °C:     | 21.0°C  | 26.0°C | ~
-   * Target °C:    | S240    | S240   | ~ 240°C
-   * Hotend_Kp:    | 20.98   | 19.94  | ~ 20,46
-   * Hotend_Ki:    | 01.43   | 01.32  | ~ 1.375
-   * Hotend_Kd:    | 77.02   | 75.55  | ~ 76.285
-   *
-   * Save/change with: M301 E0 P14.38 I0.81 D63.80;
-   *             Save: M500
-   */
-  #define DEFAULT_Kp 20.46
-  #define DEFAULT_Ki 1.375
-  #define DEFAULT_Kd 76.285
+    #elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
+      /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
+       * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
+       *                         M106 E0 S255     ; set Fan to 100%
+       *                         M303 E0 S240 C8  ; Start PID autotune
+       * Attention - Start Temperatur: Ideal is start from room temperature!
+       *
+       * Measurement:  | #1      |#2      | #Aprox.
+       * Start °C:     | 21.0°C  | 26.0°C | ~
+       * Target °C:    | S240    | S240   | ~ 240°C
+       * Hotend_Kp:    | 20.98   | 19.94  | ~ 20,46
+       * Hotend_Ki:    | 01.43   | 01.32  | ~ 1.375
+       * Hotend_Kd:    | 77.02   | 75.55  | ~ 76.285
+       *
+       * Save/change with: M301 E0 P14.38 I0.81 D63.80;
+       *             Save: M500
+       */
+      #define DEFAULT_Kp 20.46
+      #define DEFAULT_Ki 1.375
+      #define DEFAULT_Kd 76.285
 
-#elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
-  /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
-   * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
-   *                         M106 E0 S255     ; set Fan to 100%
-   *                         M303 E0 S240 C8  ; Start PID autotune
-   * Attention - Start Temperatur: Ideal is start from room temperature!
-   *
-   * Measurement:  | #1      |#2      | #Aprox.
-   * Start °C:     | 21.0°C  | 39.0°C | ~
-   * Target °C:    | S240    | S240   | ~ 240°C
-   * Hotend_Kp:    | 15.96   | 15.77  | ~ 15,865
-   * Hotend_Ki:    | 01.00   | 00.97  | ~ 0.985
-   * Hotend_Kd:    | 63.81   | 64.17  | ~ 63.99
-   *
-   * Save/change with: M301 E0 P14.38 I0.81 D63.80;
-   *             Save: M500
-   */
-  #define DEFAULT_Kp 15.865
-  #define DEFAULT_Ki 0.985
-  #define DEFAULT_Kd 63.99
-  
-#elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
-  // Default 4MAX pre-configured hotend PIDs
-  #define DEFAULT_Kp 22.2
-  #define DEFAULT_Ki 1.08
-  #define DEFAULT_Kd 114
+    #elif ENABLED(ANYCUBIC_4MAX_VG3R_SKR)
+      /** 4MAX with PID Autotune - my 4MAX Printer: vg3r - PID - Hotend
+       * Autotuned with command: M301 P0 I0 D0    ; set current PIDs to ZERO
+       *                         M106 E0 S255     ; set Fan to 100%
+       *                         M303 E0 S240 C8  ; Start PID autotune
+       * Attention - Start Temperatur: Ideal is start from room temperature!
+       *
+       * Measurement:  | #1      |#2      | #Aprox.
+       * Start °C:     | 21.0°C  | 39.0°C | ~
+       * Target °C:    | S240    | S240   | ~ 240°C
+       * Hotend_Kp:    | 15.96   | 15.77  | ~ 15,865
+       * Hotend_Ki:    | 01.00   | 00.97  | ~ 0.985
+       * Hotend_Kd:    | 63.81   | 64.17  | ~ 63.99
+       *
+       * Save/change with: M301 E0 P14.38 I0.81 D63.80;
+       *             Save: M500
+       */
+      #define DEFAULT_Kp 15.865
+      #define DEFAULT_Ki 0.985
+      #define DEFAULT_Kd 63.99
+      
+    #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
+      // Default 4MAX pre-configured hotend PIDs
+      #define DEFAULT_Kp 22.2
+      #define DEFAULT_Ki 1.08
+      #define DEFAULT_Kd 114
 
-#endif
-
+    #endif
+  #endif  // PID_PARAMS_PER_HOTEND
 #endif // PIDTEMP
 
 //===========================================================================
@@ -884,7 +896,7 @@
 
 // @section machine
 
-// Uncomment one of these options to enable CoreXY, CoreXZ, or CoreYZ kinematics
+// Enable one of the options below for CoreXY, CoreXZ, or CoreYZ kinematics,
 // either in the usual order or reversed
 //#define COREXY
 //#define COREXZ
@@ -892,6 +904,7 @@
 //#define COREYX
 //#define COREZX
 //#define COREZY
+//#define MARKFORGED_XY  // MarkForged. See https://reprap.org/forum/read.php?152,504042
 
 //===========================================================================
 //============================== Endstop Settings ===========================
@@ -1215,7 +1228,6 @@
  *    - For simple switches connect...
  *      - normally-closed switches to GND and D32.
  *      - normally-open switches to 5V and D32.
- *
  */
 //#define Z_MIN_PROBE_PIN 15 // 15: Y_MAX for BLTOUCH
 
@@ -2033,7 +2045,6 @@
  *
  *   Caveats: The ending Z should be the same as starting Z.
  * Attention: EXPERIMENTAL. G-code arguments may change.
- *
  */
 #define NOZZLE_CLEAN_FEATURE
 
@@ -2195,7 +2206,6 @@
  *
  * SD Card support is disabled by default. If your controller has an SD slot,
  * you must uncomment the following option or it won't work.
- *
  */
 #define SDSUPPORT
 
@@ -2432,6 +2442,14 @@
 //
 //#define FF_INTERFACEBOARD
 
+//
+// TFT GLCD Panel with Marlin UI
+// Panel connected to main board by SPI or I2C interface.
+// See https://github.com/Serhiy-K/TFTGLCDAdapter
+//
+//#define TFTGLCD_PANEL_SPI
+//#define TFTGLCD_PANEL_I2C
+
 //=============================================================================
 //=======================   LCD / Controller Selection  =======================
 //=========================      (Graphical LCDs)      ========================
@@ -2635,6 +2653,9 @@
 // Touch-screen LCD for Malyan M200/M300 printers
 //
 //#define MALYAN_LCD
+#if ENABLED(MALYAN_LCD)
+  #define LCD_SERIAL_PORT 1  // Default is 1 for Malyan M200
+#endif
 
 //
 // Touch UI for FTDI EVE (FT800/FT810) displays
@@ -2648,7 +2669,7 @@
 //#define ANYCUBIC_LCD_I3MEGA
 //#define ANYCUBIC_LCD_CHIRON
 #if EITHER(ANYCUBIC_LCD_I3MEGA, ANYCUBIC_LCD_CHIRON)
-  #define ANYCUBIC_LCD_SERIAL_PORT 3
+  #define LCD_SERIAL_PORT 3  // Default is 3 for Anycubic
   //#define ANYCUBIC_LCD_DEBUG
 #endif
 
@@ -2666,43 +2687,47 @@
 //=============================== Graphical TFTs ==============================
 //=============================================================================
 
-//
-// TFT display with optional touch screen
-// Color Marlin UI with standard menu system
-//
-//#define TFT_320x240
-//#define TFT_320x240_SPI
-//#define TFT_480x320
-//#define TFT_480x320_SPI
+/**
+ * TFT Type - Select your Display type
+ *
+ * Available options are:
+ *   MKS_TS35_V2_0,
+ *   MKS_ROBIN_TFT24, MKS_ROBIN_TFT28, MKS_ROBIN_TFT32, MKS_ROBIN_TFT35,
+ *   MKS_ROBIN_TFT43, MKS_ROBIN_TFT_V1_1R
+ *   TFT_TRONXY_X5SA, ANYCUBIC_TFT35, LONGER_LK_TFT28
+ *   TFT_GENERIC
+ *
+ * For TFT_GENERIC, you need to configure these 3 options:
+ *   Driver:     TFT_DRIVER
+ *               Current Drivers are: AUTO, ST7735, ST7789, ST7796, R61505, ILI9328, ILI9341, ILI9488
+ *   Resolution: TFT_WIDTH and TFT_HEIGHT
+ *   Interface:  TFT_INTERFACE_FSMC or TFT_INTERFACE_SPI
+ */
+//#define TFT_GENERIC
 
-//
-// Skip autodetect and force specific TFT driver
-// Mandatory for SPI screens with no MISO line
-// Available drivers are: ST7735, ST7789, ST7796, R61505, ILI9328, ILI9341, ILI9488
-//
-//#define TFT_DRIVER AUTO
+/**
+ * TFT UI - User Interface Selection. Enable one of the following options:
+ *
+ *   TFT_CLASSIC_UI - Emulated DOGM - 128x64 Upscaled
+ *   TFT_COLOR_UI   - Marlin Default Menus, Touch Friendly, using full TFT capabilities
+ *   TFT_LVGL_UI    - A Modern UI using LVGL
+ *
+ *   For LVGL_UI also copy the 'assets' folder from the build directory to the
+ *   root of your SD card, together with the compiled firmware.
+ */
+//#define TFT_CLASSIC_UI
+//#define TFT_COLOR_UI
+//#define TFT_LVGL_UI
 
-//
-// SPI display (MKS Robin Nano V2.0, MKS Gen L V2.0)
-// Upscaled 128x64 Marlin UI
-//
-//#define SPI_GRAPHICAL_TFT
-
-//
-// FSMC display (MKS Robin, Alfawise U20, JGAurora A5S, REXYZ A1, etc.)
-// Upscaled 128x64 Marlin UI
-//
-//#define FSMC_GRAPHICAL_TFT
-
-//
-// TFT LVGL UI
-//
-// Using default MKS icons and fonts from: https://git.io/JJvzK
-// Just copy the 'assets' folder from the build directory to the
-// root of your SD card, together with the compiled firmware.
-//
-//#define TFT_LVGL_UI_FSMC  // Robin nano v1.2 uses FSMC
-//#define TFT_LVGL_UI_SPI   // Robin nano v2.0 uses SPI
+/**
+ * TFT Rotation. Set to one of the following values:
+ *
+ *   TFT_ROTATE_90,  TFT_ROTATE_90_MIRROR_X,  TFT_ROTATE_90_MIRROR_Y,
+ *   TFT_ROTATE_180, TFT_ROTATE_180_MIRROR_X, TFT_ROTATE_180_MIRROR_Y,
+ *   TFT_ROTATE_270, TFT_ROTATE_270_MIRROR_X, TFT_ROTATE_270_MIRROR_Y,
+ *   TFT_MIRROR_X, TFT_MIRROR_Y, TFT_NO_ROTATION
+ */
+//#define TFT_ROTATION TFT_NO_ROTATION
 
 //=============================================================================
 //============================  Other Controllers  ============================
@@ -2772,9 +2797,6 @@
 // then the BLUE led is on. Otherwise the RED led is on. (1C hysteresis)
 //#define TEMP_STAT_LEDS
 
-// SkeinForge sends the wrong arc G-codes when using Arc Point as fillet procedure
-//#define SF_ARC_FIX
-
 // Support for the BariCUDA Paste Extruder
 //#define BARICUDA
 
@@ -2807,7 +2829,6 @@
  * *** CAUTION ***
  *
  * LED Type. Enable only one of the following two options.
- *
  */
 //#define RGB_LED
 //#define RGBW_LED
@@ -2887,16 +2908,11 @@
 #endif
 
 /**
- * R/C SERVO support
- * Sponsored by TrinityLabs, Reworked by codexmas
- */
-
-/**
  * Number of servos
  *
  * For some servo-related options NUM_SERVOS will be set automatically.
  * Set this manually if there are extra servos needing manual control.
- * Leave undefined or set to 0 to entirely disable the servo subsystem.
+ * Set to 0 to turn off servo support.
  */
 #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_DEFAULT)
   #define NUM_SERVOS 4 // Servo index starts with 0 for M280 command
@@ -2916,5 +2932,5 @@
 // Only power servos during movement, otherwise leave off to prevent jitter
 //#define DEACTIVATE_SERVOS_AFTER_MOVE
 
-// Allow servo angle to be edited and saved to EEPROM
+// Edit servo angles with M281 and save to EEPROM with M500
 //#define EDITABLE_SERVO_ANGLES
