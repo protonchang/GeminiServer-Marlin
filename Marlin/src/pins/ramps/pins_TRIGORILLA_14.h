@@ -27,49 +27,8 @@
 
 #define BOARD_INFO_NAME "Anycubic RAMPS 1.4"
 
-//
-// Servos
-//
-#if MB(TRIGORILLA_14_11)
-  #define SERVO0_PIN                           5
-  #define SERVO1_PIN                           4
-  #define SERVO2_PIN                          11
-  #define SERVO3_PIN                           6
-#endif
+// Board labeled pins:
 
-//
-// Limit Switches
-//
-//#define ANYCUBIC_4_MAX_PRO_ENDSTOPS
-
-#define X_MIN_PIN                              3
-
-#if ENABLED(ANYCUBIC_4_MAX_PRO_ENDSTOPS)
-  #define X_MAX_PIN                           43
-#else
-  #define X_MAX_PIN                           43
-#endif
-
-#if ENABLED(ANYCUBIC_4_MAX_PRO_ENDSTOPS)
-  #define Y_STOP_PIN                          19
-#else
-  #define Y_STOP_PIN                          42
-#endif
-
-#define Z_STOP_PIN                            18
-
-//
-// Z Probe (when not Z_MIN_PIN)
-//
-#define Z_MIN_PROBE_PIN                        2
-
-#ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN                      19
-#endif
-
-//
-// Heaters / Fans
-//
 #define TG_HEATER_BED_PIN                      8
 #define TG_HEATER_0_PIN                       10
 #define TG_HEATER_1_PIN                       45  // Anycubic Kossel: Unused
@@ -79,11 +38,20 @@
 #define TG_FAN2_PIN                           44  // Anycubic Kossel: Hotend fan
 
 #ifndef CONTROLLER_FAN_PIN
-  #define CONTROLLER_FAN_PIN           TG_FAN1_PIN
+  #define CONTROLLER_FAN_PIN                  TG_FAN1_PIN
 #endif
 
 // ?? #define BEEPER_PIN                            31
 #define SD_DETECT_PIN                         49
+//
+// Servos
+//
+#if MB(TRIGORILLA_14_11)
+  #define SERVO0_PIN                           5
+  #define SERVO1_PIN                           4
+  #define SERVO2_PIN                          11
+  #define SERVO3_PIN                           6
+#endif
 
 // Remap MOSFET pins to common usages:
 
@@ -102,7 +70,11 @@
 #elif TEMP_SENSOR_BED
   // EFB (Anycubic Kossel default)
   #define RAMPS_D9_PIN               TG_FAN0_PIN
-  #define RAMPS_D8_PIN         TG_HEATER_BED_PIN
+  #if ENABLED(ANYCUBIC_LCD_CHIRON)
+    #define RAMPS_D8_PIN         TG_HEATER_1_PIN  // Heated bed is connected to HEATER1 output
+  #else
+    #define RAMPS_D8_PIN       TG_HEATER_BED_PIN
+  #endif
 #else
   // EFF
   #define RAMPS_D9_PIN               TG_FAN1_PIN
@@ -118,6 +90,44 @@
   #define E0_AUTO_FAN_PIN            TG_FAN2_PIN  // Used in Anycubic Kossel example config
 #endif
 
+#if ENABLED(ANYCUBIC_LCD_I3MEGA)
+  #define CONTROLLER_FAN_PIN         TG_FAN1_PIN
+#endif
+
+//
+// AnyCubic standard pin mappings
+//
+//  On most printers, endstops are NOT all wired to the appropriate pins on the Trigorilla board.
+//  For instance, on a Chiron, Y axis goes to an aux connector.
+//  There are also other things that have been wired in creative ways.
+//  To enable PIN definitions for a specific printer model, #define the appropriate symbol after
+//  MOTHERBOARD in Configuration.h
+
+//
+// Limit Switches
+//
+//#define ANYCUBIC_4_MAX_PRO_ENDSTOPS
+
+#if ENABLED(ANYCUBIC_4_MAX_PRO_ENDSTOPS)
+  #define X_MAX_PIN                           43
+  #define Y_STOP_PIN                          19
+#elif EITHER(ANYCUBIC_LCD_CHIRON, ANYCUBIC_LCD_I3MEGA)
+  #define Y_STOP_PIN                          42
+  #define Z2_MIN_PIN                          43
+  #ifndef Z_MIN_PROBE_PIN
+    #define Z_MIN_PROBE_PIN                    2
+  #endif
+  #ifndef FIL_RUNOUT_PIN
+    #if ENABLED(ANYCUBIC_LCD_CHIRON)
+      #define FIL_RUNOUT_PIN                  33
+    #else
+      #define FIL_RUNOUT_PIN                  19
+    #endif
+  #endif
+  #define BEEPER_PIN                          31
+  #define SD_DETECT_PIN                       49
+#endif
+
 #include "pins_RAMPS.h"
 
 #if ENABLED(ANYCUBIC_4MAX)
@@ -126,63 +136,6 @@
  #define FILWIDTH_PIN      -1  // Trigorilla have 2 Analog Pins on AUX (D42 & D43!)
 #endif                         // ATTENTION: Onboard Description D42 is D43 and describtion D43 ist D42! ).
                                // Set this if you need FILWIDTH. Else -1!
-
-#if HAS_DRIVER(TMC2208)
-/**
- * TMC2208 stepper drivers
- *
- * Software serial settings
- *
- * Info: Following Pins can be set for TX: D6, D11, D20, D21, D42, D43
- *                                         ATTENTION: The Onboard PIN Descriptions D42, D43 are wrong (reversed)!
- *                                         Onboard Pin Description D42 is D43 and Pin describtion D43 is D42!
- * Info: Following Pins can be set for RX: D12 ( Additional and alternatively (instead of using the SD-Card): 50, 51, 52, 53.  )
- *                                         You do not need RX Pins. But useful for testing purpose.
- *
- * Info: Recommendation is to use UART RX Pin only for the Extruder E0!
- */
-
- // Software serial  E0
-  #ifdef E0_SERIAL_TX_PIN
-    #undef E0_SERIAL_TX_PIN
-    #define E0_SERIAL_TX_PIN    -1
-  #endif
-  #ifdef E0_SERIAL_RX_PIN
-    #undef E0_SERIAL_RX_PIN
-    #define E0_SERIAL_RX_PIN    -1
-  #endif
-
- // Software serial  X
-  #ifdef X_SERIAL_TX_PIN
-   #undef X_SERIAL_TX_PIN
-   #define X_SERIAL_TX_PIN    -1
-  #endif
-  #ifdef X_SERIAL_RX_PIN
-   #undef X_SERIAL_RX_PIN
-   #define X_SERIAL_RX_PIN    -1
-  #endif
-
-  // Software serial  Y
-  #ifdef Y_SERIAL_TX_PIN
-   #undef Y_SERIAL_TX_PIN
-   #define Y_SERIAL_TX_PIN    -1
-  #endif
-  #ifdef Y_SERIAL_RX_PIN
-   #undef Y_SERIAL_RX_PIN
-   #define Y_SERIAL_RX_PIN    -1
-  #endif
-
-  // Software serial  Z
-  #ifdef Z_SERIAL_TX_PIN
-   #undef Z_SERIAL_TX_PIN
-   #define Z_SERIAL_TX_PIN    -1
-  #endif
-  #ifdef Z_SERIAL_RX_PIN
-   #undef Z_SERIAL_RX_PIN
-   #define Z_SERIAL_RX_PIN    -1
-  #endif
-
-#endif //TMC2208
 
 #ifdef FIL_RUNOUT_PIN
  #undef FIL_RUNOUT_PIN
@@ -210,7 +163,7 @@
 // AnyCubic made the following changes to 1.1.0-RC8
 // If these are appropriate for your LCD let us know.
 //
-#if 0 && HAS_SPI_LCD
+#if 0 && HAS_WIRED_LCD
 
   // LCD Display output pins
   #if BOTH(NEWPANEL, PANEL_ONE)
@@ -236,4 +189,4 @@
     #define DOGLCD_A0                         42
   #endif
 
-#endif // HAS_SPI_LCD
+#endif // HAS_WIRED_LCD
