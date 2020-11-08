@@ -1,5 +1,3 @@
-new file mode 100755
-@@ -0,0 +1,50 @@
 #!/bin/bash
 
 echo "## ## ## ##"
@@ -10,9 +8,12 @@ echo "Hi, "$USER""
 echo "Please enter the release version to copy to the Release folder!"
 echo "i.e.: 2.0.6004 --> "
 read version
+echo "Finaly, please enter the release variant!"
+echo "i.e.: Rel or BETA --> "
+read variant
 
 if [ ! -z $version ]; then
-  cpy_path=$PWD/$version-REL
+  cpy_path=$PWD/$version-$variant
 
   BUILD_NAME_vg3r_skr=4MAX-vg3r-SKR
   BUILD_NAME_7of9_skr=4MAX-7of9-SKR
@@ -28,15 +29,15 @@ if [ ! -z $version ]; then
   FIRMWARE_default=../.pio/build/$BUILD_NAME_DefD/firmware.hex
   FIRMWARE_default_en=../.pio/build/$BUILD_NAME_DefE/firmware.hex
 
-  TARGET_vg3r_skr=$cpy_path/$BUILD_NAME_vg3r_skr-$version-REL.bin
-  TARGET_7of9_skr=$cpy_path/$BUILD_NAME_7of9_skr-$version-REL.bin
-  TARGET_vg3r=$cpy_path/$BUILD_NAME_vg3r-$version-REL.hex
-  TARGET_7of9=$cpy_path/$BUILD_NAME_7of9-$version-REL.hex
-  TARGET_default=$cpy_path/$BUILD_NAME_DefD-$version-REL.hex
-  TARGET_default_en=$cpy_path/$BUILD_NAME_DefE-$version-REL.hex
+  TARGET_vg3r_skr=$cpy_path/$BUILD_NAME_vg3r_skr-$version-$variant.bin
+  TARGET_7of9_skr=$cpy_path/$BUILD_NAME_7of9_skr-$version-$variant.bin
+  TARGET_vg3r=$cpy_path/$BUILD_NAME_vg3r-$version-$variant.hex
+  TARGET_7of9=$cpy_path/$BUILD_NAME_7of9-$version-$variant.hex
+  TARGET_default=$cpy_path/$BUILD_NAME_DefD-$version-$variant.hex
+  TARGET_default_en=$cpy_path/$BUILD_NAME_DefE-$version-$variant.hex
   
 
-if [ ! -d "$version-REL" ]; then mkdir $version-REL; else echo "The folder $version-REL already exist. No need to create!"; fi
+if [ ! -d "$version-$variant" ]; then mkdir $version-$variant; else echo "The folder $version-$variant already exist. No need to create!"; fi
 
 echo "Starting copy...";
 if [ -f $FIRMWARE_vg3r_skr ];   then cp $FIRMWARE_vg3r_skr   $TARGET_vg3r_skr;   echo "Copy $TARGET_vg3r_skr";   else echo "ERROR - File $FIRMWARE_vg3r_skr does not exist. Pleaser check your BUILD folder or ensure you build all release files!"; fi
@@ -50,4 +51,3 @@ echo "Done!"
 else 
  echo "Canceled - You must enter a valid version number!"
 fi
-No newline at end of file
