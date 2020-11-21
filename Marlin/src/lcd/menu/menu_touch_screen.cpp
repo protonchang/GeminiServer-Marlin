@@ -29,7 +29,7 @@
 
 void touch_screen_calibration() {
 
-  ui.touch_calibration_screen();
+  ui.touch_calibration();
 
 }
 
