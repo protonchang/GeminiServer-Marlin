@@ -182,7 +182,7 @@
 
 #ifndef SHORT_BUILD_VERSION
     #define BUILD_SUFFIX  "REL."        // Release Tag (Rel. | Beta)
-    #define BUILD_VERSION "2.0.7202"    // Version Info - Major.Minor.Build Build - WXYZ
+    #define BUILD_VERSION "2.0.7203"    // Version Info - Major.Minor.Build Build - WXYZ
                                         // W: Recent marlin release Build (Marlin 2.0.x)
                                         // XYZ: Last own build number
     #define SHORT_BUILD_VERSION  BUILD_PREFIX BUILD_VERSION BUILD_SUFFIX
@@ -1617,7 +1617,12 @@
  */
 #define FILAMENT_RUNOUT_SENSOR
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-  //#define FIL_RUNOUT_PIN     2     // D2(X_MAX_PIN) - Is defined in BOARD_TRIGORILLA_14
+  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9 )
+    #ifdef FIL_RUNOUT_PIN
+     #undef FIL_RUNOUT_PIN
+     #define FIL_RUNOUT_PIN    2  // ATTENTION: CUSTOM! Trigorilla Limit Switches are: D19(Z_MAX_PIN), D18(Z_MIN_PIN), D15(Y_MAX_PIN), D14(Y_MIN_PIN), D2(X_MAX_PIN), D3(X_MIN_PIN)
+    #endif
+  #endif
   #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
   #define FIL_RUNOUT_STATE     HIGH        // Pin state indicating that filament is NOT present.
