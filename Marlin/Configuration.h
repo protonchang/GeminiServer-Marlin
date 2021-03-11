@@ -182,7 +182,7 @@
 
 #ifndef SHORT_BUILD_VERSION
     #define BUILD_SUFFIX  "REL."        // Release Tag (Rel. | Beta)
-    #define BUILD_VERSION "2.0.7203"    // Version Info - Major.Minor.Build Build - WXYZ
+    #define BUILD_VERSION "2.0.7204"    // Version Info - Major.Minor.Build Build - WXYZ
                                         // W: Recent marlin release Build (Marlin 2.0.x)
                                         // XYZ: Last own build number
     #define SHORT_BUILD_VERSION  BUILD_PREFIX BUILD_VERSION BUILD_SUFFIX
