@@ -1154,7 +1154,9 @@
 #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9)
   #define X_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Y_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
-  #define Z_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
+  
+  #define Z_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+  
   #define X_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Y_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Z_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
@@ -1162,7 +1164,7 @@
   #define J_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
   #define K_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 
-  #define Z_MIN_PROBE_ENDSTOP_INVERTING true // Set to true to invert the logic of the probe.
+  //#define Z_MIN_PROBE_ENDSTOP_INVERTING true // Set to true to invert the logic of the probe.
 #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
   // - check if this is really the default!
   #define X_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
