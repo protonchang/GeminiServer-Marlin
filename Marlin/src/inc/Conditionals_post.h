@@ -23,7 +23,7 @@
 
 /**
  * Conditionals_post.h
- * Defines that depend on configuration but are not editable.
+ * Internal defines that depend on Configurations and Pins but are not user-editable.
  */
 
 #ifdef GITHUB_ACTIONS
@@ -48,7 +48,7 @@
   // Set additional flags to let HALs choose in their Conditionals_post.h
   #if ANY(FLASH_EEPROM_EMULATION, SRAM_EEPROM_EMULATION, SDCARD_EEPROM_EMULATION, QSPI_EEPROM)
     #define USE_EMULATED_EEPROM 1
-  #elif ANY(I2C_EEPROM, SPI_EEPROM)
+  #elif EITHER(I2C_EEPROM, SPI_EEPROM)
     #define USE_WIRED_EEPROM    1
   #elif ENABLED(IIC_BL24CXX_EEPROM)
     // nothing
@@ -78,13 +78,13 @@
 /**
  * Axis lengths and center
  */
-#ifndef AXIS4_NAME
+#if HAS_I_AXIS && !defined(AXIS4_NAME)
   #define AXIS4_NAME 'A'
 #endif
-#ifndef AXIS5_NAME
+#if HAS_J_AXIS && !defined(AXIS5_NAME)
   #define AXIS5_NAME 'B'
 #endif
-#ifndef AXIS6_NAME
+#if HAS_K_AXIS && !defined(AXIS6_NAME)
   #define AXIS6_NAME 'C'
 #endif
 
@@ -205,7 +205,7 @@
  * No adjustable bed on non-cartesians
  */
 #if IS_KINEMATIC
-  #undef LEVEL_BED_CORNERS
+  #undef LCD_BED_TRAMMING
 #endif
 
 /**
@@ -376,8 +376,8 @@
 #elif EITHER(MKS_MINI_12864_V3, BTT_MINI_12864_V1)
   #define _LCD_CONTRAST_MIN  255
   #define _LCD_CONTRAST_INIT 255
-  #define _LCD_CONTRAST_MAX  255
 #elif ENABLED(FYSETC_MINI_12864)
+  #define _LCD_CONTRAST_MIN  180
   #define _LCD_CONTRAST_INIT 220
 #elif ENABLED(ULTI_CONTROLLER)
   #define _LCD_CONTRAST_INIT 127
@@ -389,18 +389,14 @@
 #elif ENABLED(ZONESTAR_12864OLED)
   #define _LCD_CONTRAST_MIN   64
   #define _LCD_CONTRAST_INIT 128
-  #define _LCD_CONTRAST_MAX  255
+#elif ENABLED(EMOTION_TECH_LCD)
+  #define _LCD_CONTRAST_INIT 140
 #elif IS_TFTGLCD_PANEL
-  #define _LCD_CONTRAST_MIN    0
   #define _LCD_CONTRAST_INIT 250
-  #define _LCD_CONTRAST_MAX  255
 #endif
 
 #ifdef _LCD_CONTRAST_INIT
   #define HAS_LCD_CONTRAST 1
-#endif
-
-#if HAS_LCD_CONTRAST
   #ifndef LCD_CONTRAST_MIN
     #ifdef _LCD_CONTRAST_MIN
       #define LCD_CONTRAST_MIN _LCD_CONTRAST_MIN
@@ -420,8 +416,8 @@
       #define LCD_CONTRAST_MAX 63   // ST7567 6-bits contrast
     #endif
   #endif
-  #ifndef DEFAULT_LCD_CONTRAST
-    #define DEFAULT_LCD_CONTRAST LCD_CONTRAST_INIT
+  #ifndef LCD_CONTRAST_DEFAULT
+    #define LCD_CONTRAST_DEFAULT LCD_CONTRAST_INIT
   #endif
 #endif
 
@@ -441,18 +437,26 @@
     #define HAS_SHARED_MEDIA 1
   #endif
 
-  // Set SD_DETECT_STATE based on hardware if not overridden
-  #if PIN_EXISTS(SD_DETECT) && !defined(SD_DETECT_STATE)
-    #if BOTH(HAS_LCD_MENU, ELB_FULL_GRAPHIC_CONTROLLER) && (SD_CONNECTION_IS(LCD) || !defined(SDCARD_CONNECTION))
-      #define SD_DETECT_STATE HIGH
-    #else
-      #define SD_DETECT_STATE LOW
-    #endif
-  #endif
-
   // Extender cable doesn't support SD_DETECT_PIN
   #if ENABLED(NO_SD_DETECT)
     #undef SD_DETECT_PIN
+  #endif
+
+  // Not onboard or custom cable
+  #if SD_CONNECTION_IS(LCD) || !defined(SDCARD_CONNECTION)
+    #define SD_CONNECTION_TYPICAL 1
+  #endif
+
+  // Set SD_DETECT_STATE based on hardware if not overridden
+  #if PIN_EXISTS(SD_DETECT)
+    #define HAS_SD_DETECT 1
+    #ifndef SD_DETECT_STATE
+      #if ALL(SD_CONNECTION_TYPICAL, HAS_MARLINUI_MENU, ELB_FULL_GRAPHIC_CONTROLLER)
+        #define SD_DETECT_STATE HIGH
+      #else
+        #define SD_DETECT_STATE LOW
+      #endif
+    #endif
   #endif
 
   #if DISABLED(USB_FLASH_DRIVE_SUPPORT) || BOTH(MULTI_VOLUME, VOLUME_SD_ONBOARD)
@@ -463,10 +467,10 @@
     #endif
   #endif
 
-#endif
+  #if HAS_SD_DETECT && NONE(HAS_GRAPHICAL_TFT, LCD_USE_DMA_FSMC, HAS_FSMC_GRAPHICAL_TFT, HAS_SPI_GRAPHICAL_TFT, IS_DWIN_MARLINUI, EXTENSIBLE_UI, HAS_DWIN_E3V2)
+    #define REINIT_NOISY_LCD 1  // Have the LCD re-init on SD insertion
+  #endif
 
-#if ANY(HAS_GRAPHICAL_TFT, LCD_USE_DMA_FSMC, HAS_FSMC_GRAPHICAL_TFT, HAS_SPI_GRAPHICAL_TFT, IS_DWIN_MARLINUI) || !PIN_EXISTS(SD_DETECT)
-  #define NO_LCD_REINIT 1  // Suppress LCD re-initialization
 #endif
 
 /**
@@ -507,7 +511,13 @@
     #ifndef TEMP_SENSOR_REDUNDANT_MAX_DIFF
       #define TEMP_SENSOR_REDUNDANT_MAX_DIFF 10
     #endif
-    #if REDUNDANT_TEMP_MATCH(SOURCE, COOLER)
+    #if REDUNDANT_TEMP_MATCH(SOURCE, BOARD)
+      #if !PIN_EXISTS(TEMP_BOARD)
+        #error "TEMP_SENSOR_REDUNDANT_SOURCE set to BOARD requires TEMP_BOARD_PIN."
+      #else
+        #define TEMP_REDUNDANT_PIN TEMP_BOARD_PIN
+      #endif
+    #elif REDUNDANT_TEMP_MATCH(SOURCE, COOLER)
       #if !PIN_EXISTS(TEMP_COOLER)
         #error "TEMP_SENSOR_REDUNDANT_SOURCE set to COOLER requires TEMP_COOLER_PIN."
       #else
@@ -1152,7 +1162,7 @@
     #endif
   #endif
 
-  #if NUM_Z_STEPPER_DRIVERS >= 3
+  #if NUM_Z_STEPPERS >= 3
     #if Z_HOME_TO_MAX
       #ifndef Z3_MAX_ENDSTOP_INVERTING
         #if Z3_USE_ENDSTOP == _XMIN_
@@ -1284,7 +1294,7 @@
     #endif
   #endif
 
-  #if NUM_Z_STEPPER_DRIVERS >= 4
+  #if NUM_Z_STEPPERS >= 4
     #if Z_HOME_TO_MAX
       #ifndef Z4_MAX_ENDSTOP_INVERTING
         #if Z4_USE_ENDSTOP == _XMIN_
@@ -1575,7 +1585,7 @@
   #undef DISABLE_INACTIVE_Z
 #endif
 
-#if NUM_Z_STEPPER_DRIVERS >= 2
+#if NUM_Z_STEPPERS >= 2
   #if PIN_EXISTS(Z2_ENABLE) || AXIS_IS_L64XX(Z2) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(Z2))
     #define HAS_Z2_ENABLE 1
   #endif
@@ -1590,7 +1600,7 @@
   #endif
 #endif
 
-#if NUM_Z_STEPPER_DRIVERS >= 3
+#if NUM_Z_STEPPERS >= 3
   #if PIN_EXISTS(Z3_ENABLE) || AXIS_IS_L64XX(Z3) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(Z3))
     #define HAS_Z3_ENABLE 1
   #endif
@@ -1605,7 +1615,7 @@
   #endif
 #endif
 
-#if NUM_Z_STEPPER_DRIVERS >= 4
+#if NUM_Z_STEPPERS >= 4
   #if PIN_EXISTS(Z4_ENABLE) || AXIS_IS_L64XX(Z4) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(Z4))
     #define HAS_Z4_ENABLE 1
   #endif
@@ -1920,7 +1930,7 @@
     #ifndef Y_SLAVE_ADDRESS
       #define Y_SLAVE_ADDRESS 0
     #endif
-    #if ENABLED(Y_DUAL_STEPPER_DRIVERS)
+    #if HAS_DUAL_Y_STEPPERS
       #if defined(Y2_STALL_SENSITIVITY) && AXIS_HAS_STALLGUARD(Y2)
         #define Y2_SENSORLESS 1
       #endif
@@ -1958,7 +1968,7 @@
     #ifndef Z_SLAVE_ADDRESS
       #define Z_SLAVE_ADDRESS 0
     #endif
-    #if NUM_Z_STEPPER_DRIVERS >= 2
+    #if NUM_Z_STEPPERS >= 2
       #if defined(Z2_STALL_SENSITIVITY) && AXIS_HAS_STALLGUARD(Z2)
         #define Z2_SENSORLESS 1
       #endif
@@ -1975,7 +1985,7 @@
         #define Z2_SLAVE_ADDRESS 0
       #endif
     #endif
-    #if NUM_Z_STEPPER_DRIVERS >= 3
+    #if NUM_Z_STEPPERS >= 3
       #if defined(Z3_STALL_SENSITIVITY) && AXIS_HAS_STALLGUARD(Z3)
         #define Z3_SENSORLESS 1
       #endif
@@ -1992,7 +2002,7 @@
         #define Z3_SLAVE_ADDRESS 0
       #endif
     #endif
-    #if NUM_Z_STEPPER_DRIVERS >= 4
+    #if NUM_Z_STEPPERS >= 4
       #if defined(Z4_STALL_SENSITIVITY) && AXIS_HAS_STALLGUARD(Z4)
         #define Z4_SENSORLESS 1
       #endif
@@ -2214,6 +2224,7 @@
 #define TMC_UART_IS(A,N) (defined(A##_HARDWARE_SERIAL) && (CAT(HW_,A##_HARDWARE_SERIAL) == HW_Serial##N || CAT(HW_,A##_HARDWARE_SERIAL) == HW_MSerial##N))
 #define ANY_SERIAL_IS(N) (  CONF_SERIAL_IS(N) \
                          || TMC_UART_IS(X,  N) || TMC_UART_IS(Y , N) || TMC_UART_IS(Z , N) \
+                         || TMC_UART_IS(I,  N) || TMC_UART_IS(J , N) || TMC_UART_IS(K , N) \
                          || TMC_UART_IS(X2, N) || TMC_UART_IS(Y2, N) || TMC_UART_IS(Z2, N) || TMC_UART_IS(Z3, N) || TMC_UART_IS(Z4, N) \
                          || TMC_UART_IS(E0, N) || TMC_UART_IS(E1, N) || TMC_UART_IS(E2, N) || TMC_UART_IS(E3, N) || TMC_UART_IS(E4, N) )
 
@@ -2308,8 +2319,8 @@
 #define IS_X2_ENDSTOP(A,M) (ENABLED(X_DUAL_ENDSTOPS) && X2_USE_ENDSTOP == _##A##M##_)
 #define IS_Y2_ENDSTOP(A,M) (ENABLED(Y_DUAL_ENDSTOPS) && Y2_USE_ENDSTOP == _##A##M##_)
 #define IS_Z2_ENDSTOP(A,M) (ENABLED(Z_MULTI_ENDSTOPS) && Z2_USE_ENDSTOP == _##A##M##_)
-#define IS_Z3_ENDSTOP(A,M) (ENABLED(Z_MULTI_ENDSTOPS) && NUM_Z_STEPPER_DRIVERS >= 3 && Z3_USE_ENDSTOP == _##A##M##_)
-#define IS_Z4_ENDSTOP(A,M) (ENABLED(Z_MULTI_ENDSTOPS) && NUM_Z_STEPPER_DRIVERS >= 4 && Z4_USE_ENDSTOP == _##A##M##_)
+#define IS_Z3_ENDSTOP(A,M) (ENABLED(Z_MULTI_ENDSTOPS) && NUM_Z_STEPPERS >= 3 && Z3_USE_ENDSTOP == _##A##M##_)
+#define IS_Z4_ENDSTOP(A,M) (ENABLED(Z_MULTI_ENDSTOPS) && NUM_Z_STEPPERS >= 4 && Z4_USE_ENDSTOP == _##A##M##_)
 
 #define _HAS_STOP(A,M) (PIN_EXISTS(A##_##M) && !IS_PROBE_PIN(A,M) && !IS_X2_ENDSTOP(A,M) && !IS_Y2_ENDSTOP(A,M) && !IS_Z2_ENDSTOP(A,M) && !IS_Z3_ENDSTOP(A,M) && !IS_Z4_ENDSTOP(A,M))
 #if _HAS_STOP(X,MIN)
@@ -2445,11 +2456,11 @@
 #if HAS_TEMP(BED)
   #define HAS_TEMP_BED 1
 #endif
-#if HAS_TEMP(PROBE)
-  #define HAS_TEMP_PROBE 1
-#endif
 #if HAS_TEMP(CHAMBER)
   #define HAS_TEMP_CHAMBER 1
+#endif
+#if HAS_TEMP(PROBE)
+  #define HAS_TEMP_PROBE 1
 #endif
 #if HAS_TEMP(COOLER)
   #define HAS_TEMP_COOLER 1
@@ -2563,6 +2574,9 @@
 #endif
 #if BOTH(HAS_COOLER, THERMAL_PROTECTION_COOLER) && WATCH_COOLER_TEMP_PERIOD > 0
   #define WATCH_COOLER 1
+#endif
+#if NONE(THERMAL_PROTECTION_HOTENDS, THERMAL_PROTECTION_CHAMBER, THERMAL_PROTECTION_BED, THERMAL_PROTECTION_COOLER)
+  #undef THERMAL_PROTECTION_VARIANCE_MONITOR
 #endif
 #if  (ENABLED(THERMAL_PROTECTION_HOTENDS) || !EXTRUDERS) \
   && (ENABLED(THERMAL_PROTECTION_BED)     || !HAS_HEATED_BED) \
@@ -2820,17 +2834,9 @@
 #endif
 
 // User Interface
-#if ENABLED(FREEZE_FEATURE)
-  #if !PIN_EXISTS(FREEZE) && PIN_EXISTS(KILL)
-    #define FREEZE_PIN KILL_PIN
-  #endif
-  #if PIN_EXISTS(FREEZE)
-    #define HAS_FREEZE_PIN 1
-  #endif
-#else
-  #undef FREEZE_PIN
-#endif
-#if PIN_EXISTS(KILL) && TERN1(FREEZE_FEATURE, KILL_PIN != FREEZE_PIN)
+#if ENABLED(FREEZE_FEATURE) && !PIN_EXISTS(FREEZE) && PIN_EXISTS(KILL)
+  #define FREEZE_PIN KILL_PIN
+#elif PIN_EXISTS(KILL) && TERN1(FREEZE_FEATURE, KILL_PIN != FREEZE_PIN)
   #define HAS_KILL 1
 #endif
 #if PIN_EXISTS(HOME)
@@ -3048,7 +3054,7 @@
   #define HAS_TEMPERATURE 1
 #endif
 
-#if HAS_TEMPERATURE && EITHER(HAS_LCD_MENU, HAS_DWIN_E3V2)
+#if HAS_TEMPERATURE && ANY(HAS_MARLINUI_MENU, HAS_DWIN_E3V2, HAS_DGUS_LCD_CLASSIC)
   #ifdef PREHEAT_6_LABEL
     #define PREHEAT_COUNT 6
   #elif defined(PREHEAT_5_LABEL)
@@ -3173,7 +3179,7 @@
  * Advanced Pause - Filament Change
  */
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
-  #if ANY(HAS_LCD_MENU, EXTENSIBLE_UI, DWIN_CREALITY_LCD_ENHANCED, DWIN_CREALITY_LCD_JYERSUI) || BOTH(EMERGENCY_PARSER, HOST_PROMPT_SUPPORT)
+  #if ANY(HAS_MARLINUI_MENU, EXTENSIBLE_UI, DWIN_LCD_PROUI, DWIN_CREALITY_LCD_JYERSUI) || BOTH(EMERGENCY_PARSER, HOST_PROMPT_SUPPORT)
     #define M600_PURGE_MORE_RESUMABLE 1
   #endif
   #ifndef FILAMENT_CHANGE_SLOW_LOAD_LENGTH
@@ -3305,10 +3311,13 @@
  * Buzzer/Speaker
  */
 #if PIN_EXISTS(BEEPER)
-  #define USE_BEEPER 1
+  #define HAS_BEEPER 1
 #endif
-#if USE_BEEPER || ANY(LCD_USE_I2C_BUZZER, PCA9632_BUZZER)
-  #define HAS_BUZZER 1
+#if ANY(IS_TFTGLCD_PANEL, PCA9632_BUZZER, LCD_USE_I2C_BUZZER)
+  #define USE_MARLINUI_BUZZER 1
+#endif
+#if EITHER(HAS_BEEPER, USE_MARLINUI_BUZZER)
+  #define HAS_SOUND 1
 #endif
 
 #if ENABLED(LCD_USE_I2C_BUZZER)
@@ -3318,7 +3327,7 @@
   #ifndef LCD_FEEDBACK_FREQUENCY_DURATION_MS
     #define LCD_FEEDBACK_FREQUENCY_DURATION_MS 100
   #endif
-#elif HAS_BUZZER
+#elif HAS_SOUND
   #ifndef LCD_FEEDBACK_FREQUENCY_HZ
     #define LCD_FEEDBACK_FREQUENCY_HZ 5000
   #endif
@@ -3327,12 +3336,13 @@
   #endif
 #endif
 
-#if HAS_BUZZER
+#if HAS_SOUND
   #if LCD_FEEDBACK_FREQUENCY_DURATION_MS && LCD_FEEDBACK_FREQUENCY_HZ
     #define HAS_CHIRP 1
   #endif
 #else
   #undef SOUND_MENU_ITEM   // No buzzer menu item without a buzzer
+  #undef SOUND_ON_DEFAULT
 #endif
 
 /**
@@ -3403,7 +3413,7 @@
   #endif
 #endif
 
-#if HAS_LCD_MENU
+#if HAS_MARLINUI_MENU
   // LCD timeout to status screen default is 15s
   #ifndef LCD_TIMEOUT_TO_STATUS
     #define LCD_TIMEOUT_TO_STATUS 15000
@@ -3502,4 +3512,15 @@
 
 #if PIN_EXISTS(SAFE_POWER) && DISABLED(DISABLE_DRIVER_SAFE_POWER_PROTECT)
   #define HAS_DRIVER_SAFE_POWER_PROTECT 1
+#endif
+
+#if ANY(ENDSTOPPULLDOWNS, ENDSTOPPULLDOWN_ZMIN_PROBE, \
+    ENDSTOPPULLDOWN_XMIN, ENDSTOPPULLDOWN_YMIN, ENDSTOPPULLDOWN_ZMIN, \
+    ENDSTOPPULLDOWN_IMIN, ENDSTOPPULLDOWN_JMIN, ENDSTOPPULLDOWN_KMIN, \
+    ENDSTOPPULLDOWN_XMAX, ENDSTOPPULLDOWN_YMAX, ENDSTOPPULLDOWN_ZMAX, \
+    ENDSTOPPULLDOWN_IMAX, ENDSTOPPULLDOWN_JMAX, ENDSTOPPULLDOWN_KMAX, \
+    POWER_LOSS_PULLDOWN, CALIBRATION_PIN_PULLDOWN, FIL_RUNOUT_PULLDOWN, \
+    FIL_RUNOUT1_PULLDOWN, FIL_RUNOUT2_PULLDOWN, FIL_RUNOUT3_PULLDOWN, FIL_RUNOUT4_PULLDOWN, \
+    FIL_RUNOUT5_PULLDOWN, FIL_RUNOUT6_PULLDOWN, FIL_RUNOUT7_PULLDOWN, FIL_RUNOUT8_PULLDOWN)
+  #define USING_PULLDOWNS 1
 #endif

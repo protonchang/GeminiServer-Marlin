@@ -45,7 +45,7 @@
 /**
  * GCode parser
  *
- *  - Parse a single gcode line for its letter, code, subcode, and parameters
+ *  - Parse a single G-code line for its letter, code, subcode, and parameters
  *  - FASTER_GCODE_PARSER:
  *    - Flags existing params (1 bit each)
  *    - Stores value offsets (1 byte each)
@@ -225,7 +225,7 @@ public:
   #endif // !FASTER_GCODE_PARSER
 
   // Seen any axis parameter
-  static bool seen_axis() { return seen(LOGICAL_AXES_STRING); }
+  static bool seen_axis() { return seen(STR_AXES_LOGICAL); }
 
   #if ENABLED(GCODE_QUOTED_STRINGS)
     static char* unescape_string(char* &src);
@@ -355,7 +355,7 @@ public:
       return input_temp_units == TEMPUNIT_K ? F("Kelvin") : input_temp_units == TEMPUNIT_F ? F("Fahrenheit") : F("Celsius");
     }
 
-    #if HAS_LCD_MENU && DISABLED(DISABLE_M503)
+    #if HAS_MARLINUI_MENU && DISABLED(DISABLE_M503)
 
       static float to_temp_units(celsius_t c) {
         switch (input_temp_units) {
@@ -366,7 +366,7 @@ public:
         }
       }
 
-    #endif // HAS_LCD_MENU && !DISABLE_M503
+    #endif // HAS_MARLINUI_MENU && !DISABLE_M503
 
     static celsius_t value_celsius() {
       float f = value_float();

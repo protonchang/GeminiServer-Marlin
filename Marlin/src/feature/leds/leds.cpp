@@ -27,6 +27,7 @@
 #include "../../inc/MarlinConfig.h"
 
 #if HAS_COLOR_LEDS
+
 #include "leds.h"
 
 #if ENABLED(BLINKM)
@@ -41,7 +42,7 @@
   #include "pca9533.h"
 #endif
 
-#if ENABLED(CASE_LIGHT_USE_RGB_LED)
+#if EITHER(CASE_LIGHT_USE_RGB_LED, CASE_LIGHT_USE_NEOPIXEL)
   #include "../../feature/caselight.h"
 #endif
 
@@ -69,7 +70,7 @@ void LEDLights::setup() {
       if (PWM_PIN(RGB_LED_W_PIN)) SET_PWM(RGB_LED_W_PIN); else SET_OUTPUT(RGB_LED_W_PIN);
     #endif
   #endif
-  //TERN_(NEOPIXEL_LED, neo.init());
+  TERN_(NEOPIXEL_LED, neo.init());
   TERN_(PCA9533, PCA9533_init());
   TERN_(LED_USER_PRESET_STARTUP, set_default());
 }
@@ -94,21 +95,26 @@ void LEDLights::set_color(const LEDColor &incol
       #endif
     #endif
 
+    #if BOTH(CASE_LIGHT_MENU, CASE_LIGHT_USE_NEOPIXEL)
+      // Update brightness only if caselight is ON or switching leds off
+      if (caselight.on || incol.is_off())
+    #endif
     neo.set_brightness(incol.i);
 
     #if ENABLED(NEOPIXEL_IS_SEQUENTIAL)
       if (isSequence) {
         neo.set_pixel_color(nextLed, neocolor);
-        // TODO: EC - Check
-        #if MULTIPLE_NEOPIXEL_TYPES
-          //if(nextLed < neo.pixels(1)) neo.set_pixel_color(nextLed, neocolor, 1);
-        #endif
         neo.show();
         if (++nextLed >= neo.pixels()) nextLed = 0;
         return;
       }
     #endif
-    //neo.set_color(neocolor);
+
+    #if BOTH(CASE_LIGHT_MENU, CASE_LIGHT_USE_NEOPIXEL)
+      // Update color only if caselight is ON or switching leds off
+      if (caselight.on || incol.is_off())
+    #endif
+    neo.set_color(neocolor);
 
   #endif
 
@@ -123,11 +129,11 @@ void LEDLights::set_color(const LEDColor &incol
 
     // This variant uses 3-4 separate pins for the RGB(W) components.
     // If the pins can do PWM then their intensity will be set.
-    #define _UPDATE_RGBW(C,c) do {                 \
-      if (PWM_PIN(RGB_LED_##C##_PIN))              \
-        set_pwm_duty(pin_t(RGB_LED_##C##_PIN), c); \
-      else                                         \
-        WRITE(RGB_LED_##C##_PIN, c ? HIGH : LOW);  \
+    #define _UPDATE_RGBW(C,c) do {                     \
+      if (PWM_PIN(RGB_LED_##C##_PIN))                  \
+        hal.set_pwm_duty(pin_t(RGB_LED_##C##_PIN), c); \
+      else                                             \
+        WRITE(RGB_LED_##C##_PIN, c ? HIGH : LOW);      \
     }while(0)
     #define UPDATE_RGBW(C,c) _UPDATE_RGBW(C, TERN1(CASE_LIGHT_USE_RGB_LED, caselight.on) ? incol.c : 0)
     UPDATE_RGBW(R,r); UPDATE_RGBW(G,g); UPDATE_RGBW(B,b);
@@ -152,7 +158,7 @@ void LEDLights::set_color(const LEDColor &incol
   void LEDLights::toggle() { if (lights_on) set_off(); else update(); }
 #endif
 
-#ifdef LED_BACKLIGHT_TIMEOUT
+#if LED_POWEROFF_TIMEOUT > 0
 
   millis_t LEDLights::led_off_time; // = 0
 
