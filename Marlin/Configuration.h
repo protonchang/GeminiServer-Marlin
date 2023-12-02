@@ -182,7 +182,7 @@
 
 #ifndef SHORT_BUILD_VERSION
     #define BUILD_SUFFIX  "REL."        // Release Tag (Rel. | Beta)
-    #define BUILD_VERSION "2.0.7204"    // Version Info - Major.Minor.Build Build - WXYZ
+    #define BUILD_VERSION "2.0.7202"    // Version Info - Major.Minor.Build Build - WXYZ
                                         // W: Recent marlin release Build (Marlin 2.0.x)
                                         // XYZ: Last own build number
     #define SHORT_BUILD_VERSION  BUILD_PREFIX BUILD_VERSION BUILD_SUFFIX
@@ -981,7 +981,7 @@
   #define X_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Y_MAX_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Z_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
-  //#define Z_MIN_PROBE_ENDSTOP_INVERTING false // Set to true to invert the logic of the probe.
+  #define Z_MIN_PROBE_ENDSTOP_INVERTING false // Set to true to invert the logic of the probe.
 #elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define X_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
   #define Y_MIN_ENDSTOP_INVERTING true // Set to true to invert the logic of the endstop.
@@ -1229,7 +1229,7 @@
  *      - normally-closed switches to GND and D32.
  *      - normally-open switches to 5V and D32.
  */
-//#define Z_MIN_PROBE_PIN 15 // 15: Y_MAX for BLTOUCH
+#define Z_MIN_PROBE_PIN 19 // 15: Y_MAX for BLTOUCH
 
 /**
  * Probe Type
@@ -1276,7 +1276,7 @@
  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9, ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define BLTOUCH
  #else
-  //#define BLTOUCH
+  #define BLTOUCH
  #endif
 
 /**
@@ -1377,7 +1377,8 @@
   //#define NOZZLE_TO_PROBE_OFFSET { 32.77, 0, -0.96 }
   #define NOZZLE_TO_PROBE_OFFSET { 33, 0, -1.25 }
 #elif ENABLED(ANYCUBIC_4MAX_DEFAULT)
-  #define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
+  //#define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
+  #define NOZZLE_TO_PROBE_OFFSET { 34, 0, -0.7 }
 #elif ENABLED(ANYCUBIC_4MAX_7OF9_SKR)
   // my 4MAX Printer: 7of9 - Offset
   //#define NOZZLE_TO_PROBE_OFFSET { 32.77, 0, -0.96 }
@@ -1559,8 +1560,8 @@
   #define X_BED_SIZE 207
   #define Y_BED_SIZE 215
 #else
-  #define X_BED_SIZE 218
-  #define Y_BED_SIZE 218
+  #define X_BED_SIZE 207
+  #define Y_BED_SIZE 215
 #endif
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
@@ -1615,14 +1616,9 @@
  * RAMPS-based boards use SERVO3_PIN for the first runout sensor.
  * For other boards you may need to define FIL_RUNOUT_PIN, FIL_RUNOUT2_PIN, etc.
  */
-#define FILAMENT_RUNOUT_SENSOR
+//#define FILAMENT_RUNOUT_SENSOR
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
-  #if ANY(ANYCUBIC_4MAX_VG3R, ANYCUBIC_4MAX_7OF9 )
-    #ifdef FIL_RUNOUT_PIN
-     #undef FIL_RUNOUT_PIN
-     #define FIL_RUNOUT_PIN    2  // ATTENTION: CUSTOM! Trigorilla Limit Switches are: D19(Z_MAX_PIN), D18(Z_MIN_PIN), D15(Y_MAX_PIN), D14(Y_MIN_PIN), D2(X_MAX_PIN), D3(X_MIN_PIN)
-    #endif
-  #endif
+  //#define FIL_RUNOUT_PIN     2     // D2(X_MAX_PIN) - Is defined in BOARD_TRIGORILLA_14
   #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
   #define FIL_RUNOUT_STATE     HIGH        // Pin state indicating that filament is NOT present.
@@ -1691,7 +1687,7 @@
 #elif ANY(ANYCUBIC_4MAX_7OF9_SKR, ANYCUBIC_4MAX_VG3R_SKR)
   #define AUTO_BED_LEVELING_UBL
 #else
-  //#define AUTO_BED_LEVELING_BILINEAR
+  #define AUTO_BED_LEVELING_BILINEAR
 #endif
 //#define AUTO_BED_LEVELING_UBL
 //#define MESH_BED_LEVELING
@@ -1866,7 +1862,7 @@
     #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
     #define Z_SAFE_HOMING_Y_POINT Y_CENTER  // Y point for Z homing
   #else
-    #define Z_SAFE_HOMING_X_POINT X_MIN_BED  // X point for Z homing
+    #define Z_SAFE_HOMING_X_POINT X_MIN_POS  // X point for Z homing
     #define Z_SAFE_HOMING_Y_POINT Y_MIN_BED  // Y point for Z homing
   #endif
 #endif
@@ -2172,7 +2168,7 @@
 #if defined LCD_LANGUAGE_EN
 #define LCD_LANGUAGE en
 #else
-#define LCD_LANGUAGE de
+#define LCD_LANGUAGE en
 #endif
 
 /**
